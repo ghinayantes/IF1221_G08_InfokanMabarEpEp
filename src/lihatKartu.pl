@@ -1,29 +1,17 @@
-:- dynamic currentPlayer/1.
-:- dynamic playerCards/2.
-
 lihatKartu :-
-    currentPlayer(Player),
-    playerCards(Player, Cards),
-    write('Berikut kartu yang anda miliki.'), nl,
+    giliranSekarang(Player),
+    kartuTangan(Player, Cards),
+    write('Berikut kartu yang anda miliki:'), nl,
     tampilkanKartu(Cards, 1).
 
 tampilkanKartu([], _).
 
-tampilkanKartu([kartu(Card, false)|T], N) :-
-    write(N),
-    write('. '),
-    write(Card),
-    nl,
+tampilkanKartu([kartu(Warna, angka(N))|T], Idx) :- !,
+    format('~w. ~w-~w~n', [Idx, Warna, N]),
+    NextIdx is Idx + 1,
+    tampilkanKartu(T, NextIdx).
 
-    N1 is N + 1,
-    tampilkanKartu(T, N1).
-
-tampilkanKartu([kartu(Card, true)|T], N) :-
-    write(N),
-    write('. '),
-    write(Card),
-    write(' (disembunyikan)'),
-    nl,
-
-    N1 is N + 1,
-    tampilkanKartu(T, N1).
+tampilkanKartu([kartu(Warna, Jenis)|T], Idx) :-
+    format('~w. ~w-~w~n', [Idx, Warna, Jenis]),
+    NextIdx is Idx + 1,
+    tampilkanKartu(T, NextIdx).

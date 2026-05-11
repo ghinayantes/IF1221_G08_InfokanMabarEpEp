@@ -10,6 +10,8 @@
 :- include('kartu.pl').
 :- include('pemain.pl').
 :- include('distribusiKartu.pl').
+:- include('lihatKartu.pl').
+:- include('lihatCommand.pl').
 
 startGame :-
     write('Masukkan jumlah pemain: '),
@@ -80,4 +82,10 @@ bagiKartuPemain(DaftarNama, DeckIn, DeckOut).: Menjalankan proses pembagian 7 ka
 cekKartuValid(Kartu).: Memastikan kartu pertama di discard pile bukan kartu spesial (skip, reverse, draw_two, wild) sesuai aturan.
 
 hapusDataLama.: Membersihkan seluruh data permainan sebelumnya dari memori agar tidak terjadi bentrok saat memulai sesi baru.
+
+lihatKartu.: Muncul daftar kartu milik pemain yang sedang giliran 
+
+lihatCommand.: Muncul daftar perintah yang bisa diketik. Jika kartu di meja bukan wild draw four, maka opsi mainkanKartu harus muncul.
+
+kartuTangan('NamaPemain', X), tampilkanKartu(X, 1). : Mengetes fungsi penampil kartu secara manual untuk pemain tertentu.
 */
