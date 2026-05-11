@@ -40,8 +40,11 @@ inisialisasiGame(DaftarNama) :-
     hapusDataLama,
     acakList(DaftarNama, UrutanBaru),
     buatDeckBaru(DeckLengkap),
+    % Bagian Distribusi Kartu:
     bagiKartuPemain(UrutanBaru, DeckLengkap, DeckSisa),
+    % Bagian Discard Pile Awal:
     setKartuAwal(DeckSisa, KartuAwal, DeckFinal),
+    
     assertz(urutanPemain(UrutanBaru)),
     UrutanBaru = [Pertama|_],
     assertz(giliranSekarang(Pertama)),
@@ -50,6 +53,7 @@ inisialisasiGame(DaftarNama) :-
     assertz(arahPermainan(kanan)),
     assertz(statusUni([])),
     assertz(sisaDeck(DeckFinal)),
+    
     nl,
     format('Urutan pemain: ', []),
     tampilkanUrutan(UrutanBaru),
@@ -60,6 +64,25 @@ inisialisasiGame(DaftarNama) :-
     nl, nl,
     format('Giliran ~w.~n', [Pertama]),
     !.
+
+bagiKartuPemain([], Deck, Deck).
+bagiKartuPemain([P|SisaP], Deck, DeckAkhir) :-
+    ambilTujuh(7, Deck, Tangan, SisaD),
+    assertz(kartuTangan(P, Tangan)),
+    bagiKartuPemain(SisaP, SisaD, DeckAkhir).
+
+ambilTujuh(0, D, [], D) :- !.
+ambilTujuh(N, [K|R], [K|Ks], D) :-
+    N > 0, N1 is N - 1,
+    ambilTujuh(N1, R, Ks, D).
+
+% Discard Pile awal tidak boleh kartu spesial/hitam
+cekKartuValid(kartu(W, J)) :-
+    W \= hitam,
+    \+ member(J, [skip, reverse, drawTwo]).
+
+setKartuAwal([K|R], K, R) :- cekKartuValid(K), !.
+setKartuAwal([_|R], K, D) :- setKartuAwal(R, K, D).
 
 acakList([], []) :- !.
 acakList(List, [Item|SisaAcak]) :-
@@ -76,8 +99,7 @@ hitungPanjang([_|T], Len) :-
 
 ambilElemen(0, [H|_], H) :- !.
 ambilElemen(I, [_|T], Elem) :-
-    I > 0,
-    I1 is I - 1,
+    I > 0, I1 is I - 1,
     ambilElemen(I1, T, Elem).
 
 hapusElemen(_X, [], []) :- !.
@@ -100,24 +122,6 @@ buatDeckBaru(Deck) :-
     append(Base, Extra, Gabungan),
     acakList(Gabungan, Deck).
 
-bagiKartuPemain([], Deck, Deck).
-bagiKartuPemain([P|SisaP], Deck, DeckAkhir) :-
-    ambilTujuh(7, Deck, Tangan, SisaD),
-    assertz(kartuTangan(P, Tangan)),
-    bagiKartuPemain(SisaP, SisaD, DeckAkhir).
-
-ambilTujuh(0, D, [], D) :- !.
-ambilTujuh(N, [K|R], [K|Ks], D) :-
-    N > 0, N1 is N - 1,
-    ambilTujuh(N1, R, Ks, D).
-
-cekKartuValid(kartu(W, J)) :-
-    W \= hitam,
-    \+ member(J, [skip, reverse, drawTwo]).
-
-setKartuAwal([K|R], K, R) :- cekKartuValid(K), !.
-setKartuAwal([_|R], K, D) :- setKartuAwal(R, K, D).
-
 hapusDataLama :-
     retractall(urutanPemain(_)),
     retractall(giliranSekarang(_)),
@@ -127,3 +131,31 @@ hapusDataLama :-
     retractall(arahPermainan(_)),
     retractall(statusUni(_)),
     retractall(sisaDeck(_)).
+
+/* 
+Daftar Query yang dapat digunakan:
+
+urutanPemain(X).: Melihat daftar seluruh pemain sesuai urutan giliran hasil pengacakan.
+
+giliranSekarang(X).: Mengetahui nama pemain yang saat ini sedang memegang giliran untuk bermain.
+
+kartuTeratas(X).: Melihat kartu aktif yang sedang ada di meja (discard pile).
+
+kartuTangan(NamaPemain, X).: Melihat daftar 7 kartu yang sedang dipegang oleh pemain tertentu secara spesifik (Contoh: kartuTangan('Ghina', X).).
+
+warnaAktif(X).: Melihat warna kartu yang sedang berlaku di meja (sangat berguna setelah kartu wildcard dimainkan).
+
+arahPermainan(X).: Mengetahui arah putaran permainan saat ini, apakah searah jarum jam (kanan) atau berlawanan (kiri).
+
+sisaDeck(X).: Melihat tumpukan seluruh kartu yang masih tersisa di deck dan belum diambil.
+
+statusUni(X).: Melihat daftar nama pemain yang sudah berteriak "UNI" karena kartunya sisa satu.
+
+buatDeckBaru(X).: Menghasilkan daftar 108 kartu UNI yang sudah teracak sempurna.
+
+bagiKartuPemain(DaftarNama, DeckIn, DeckOut).: Menjalankan proses pembagian 7 kartu ke masing-masing pemain dan menyimpannya ke memori.
+
+cekKartuValid(Kartu).: Memastikan kartu pertama di discard pile bukan kartu spesial (skip, reverse, draw_two, wild) sesuai aturan.
+
+hapusDataLama.: Membersihkan seluruh data permainan sebelumnya dari memori agar tidak terjadi bentrok saat memulai sesi baru.
+*/
