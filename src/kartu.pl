@@ -86,11 +86,6 @@ lempar(kartu(_, Jenis), kartu(_, Jenis)).
 lempar(kartu(hitam, wild), _).
 lempar(kartu(hitam, wildDrawFour), _).
 
-/* Deklarasi Rules */
-/* Definisi Member */
-member(X, [X|_]). 
-member(X, [_|T]) :- member(X, T).
-
 /* Cek Kesamaan Kartu di Tangan dan di Meja*/
 cekKesamaan(kartu(W, _), W, _).
 cekKesamaan(kartu(_, J), _, J).
