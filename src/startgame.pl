@@ -12,12 +12,13 @@
 :- include('distribusiKartu.pl').
 :- include('lihatKartu.pl').
 :- include('lihatCommand.pl').
+:- include('ambilKartu.pl').
+:- include('mainkanKartu.pl').
 
 startGame :-
     write('Masukkan jumlah pemain: '),
     read(N),
-    (integer(N), N >= 2, N =< 4 -> nl, inputNamaPemain(N, [], DaftarNama),
-    inisialisasiGame(DaftarNama) ; write('Mohon masukkan angka antara 2 - 4.'), nl, startGame).
+    prosesInputPemain(N).
 
 inisialisasiGame(DaftarNama) :-
     hapusDataLama,

@@ -11,11 +11,11 @@ ambilKartu :-
     retract(kartuTangan(Pemain, _)),
     asserta(kartuTangan(Pemain, TanganBaru)),
     
-    write('Anda mengambil kartu: '), writeln(KartuBaru),
+    write('Anda mengambil kartu: '), cetakKartu(KartuBaru), nl,
     gantiGiliran.
 
 ambilKartu :-
-    writeln('Gagal memainkan. Deck kosong!').
+    write('Gagal memainkan. Deck kosong!'), nl.
 
 /* untuk efek kartu Draw Two (+2) atau Wild Draw Four (+4) */
 ambilKartu(Pemain, Jumlah) :-
@@ -31,7 +31,7 @@ ambilKartu(Pemain, Jumlah) :-
     retract(kartuTangan(Pemain, _)),
     asserta(kartuTangan(Pemain, TanganBaru)),
     
-    write(Pemain), write(' mengambil '), write(Jumlah), writeln(' kartu dari deck.').
+    write(Pemain), write(' mengambil '), write(Jumlah), write(' kartu dari deck.'), nl.
 
 /* helper ambil N kartu dari deck */
 

@@ -1,3 +1,19 @@
+prosesInputPemain(2) :- 
+    nl, inputNamaPemain(2, [], DaftarNama),
+    inisialisasiGame(DaftarNama), !.
+
+prosesInputPemain(3) :- 
+    nl, inputNamaPemain(3, [], DaftarNama),
+    inisialisasiGame(DaftarNama), !.
+
+prosesInputPemain(4) :- 
+    nl, inputNamaPemain(4, [], DaftarNama),
+    inisialisasiGame(DaftarNama), !.
+
+prosesInputPemain(_) :-
+    write('Mohon masukkan angka antara 2 - 4.'), nl,
+    startGame.
+
 inputNamaPemain(0, Acc, Pemain) :-
     reverse(Acc, Pemain).
 

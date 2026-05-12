@@ -17,13 +17,12 @@ mainkanKartu(NomorUrut) :-
     
     updateWarnaAktif(Warna),
     
-    write('Berhasil memainkan: '), writeln(KartuPilihan),
+    write('Berhasil memainkan: '), cetakKartu(KartuPilihan), nl,
 
-    eksekusiEfek(Jenis),
-    gantiGiliran.
+    eksekusiEfek(Jenis).
 
 mainkanKartu(_) :-
-    writeln('Gagal memainkan. Nomor urut salah atau kartu tidak cocok dengan meja!').
+    write('Gagal memainkan. Nomor urut salah atau kartu tidak cocok dengan meja!'), nl.
 
 /* helper syarat validasi kartu */
 /* dilempar jika warnanya sama dengan warna aktif di meja */
@@ -49,7 +48,7 @@ updateWarnaAktif(Warna) :-
     asserta(warnaAktif(Warna)).
 
 /* helper pindah giliran */
-   gantiGiliran :-
+gantiGiliran :-
     urutanPemain(ListPemain), 
     giliranSekarang(Sekarang), 
     arahPermainan(Arah),
@@ -58,21 +57,18 @@ updateWarnaAktif(Warna) :-
     
     retract(giliranSekarang(_)),
     asserta(giliranSekarang(Next)),
-    write('Giliran pindah ke: '), writeln(Next).
+    write('Giliran pindah ke: '), write(Next), nl.
 
 
-/* 1: main ke kanan, pemain masih di tengah urutan */
 tentukanSelanjutnya(kanan, Sekarang, ListPemain, Next) :-
     append(_, [Sekarang, Next|_], ListPemain), !.
 
-/* 2: main ke kanan, pemain di urutan terakhir */
 tentukanSelanjutnya(kanan, _, ListPemain, Next) :-
-    ListPemain = [Next|_], !.
+    ListPemain = [Next|_], !. 
 
-/* 3: main ke kiri, pemain masih di tengah urutan */
 tentukanSelanjutnya(kiri, Sekarang, ListPemain, Next) :-
     append(_, [Next, Sekarang|_], ListPemain), !.
 
-/* 4: main ke kiri, pemain di urutan pertama */
-tentukanSelanjutnya(kiri, _, ListPemain, Next) :-
+tentukanSelanjutnya(kiri, Sekarang, ListPemain, Next) :-
+    ListPemain = [Sekarang|_], 
     last(ListPemain, Next), !.
