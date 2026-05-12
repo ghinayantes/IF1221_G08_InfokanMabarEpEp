@@ -9,7 +9,6 @@ ambilTujuh(N, [K|R], [K|Ks], D) :-
     N > 0, N1 is N - 1,
     ambilTujuh(N1, R, Ks, D).
 
-% Penyesuaian cek kartu valid untuk struktur baru
 cekKartuValid(kartu(W, J)) :-
     W \= hitam,
     \+ member(J, [skip, reverse, drawTwo, wild, wildDrawFour]).
@@ -40,7 +39,6 @@ hapusElemen(H, [H|T], T) :- !.
 hapusElemen(X, [H|T], [H|R]) :-
     hapusElemen(X, T, R).
 
-% Penyesuaian cetak kartu untuk struktur angka(N)
 cetakKartu(kartu(Warna, angka(N))) :- !,
     format('~w-~w', [Warna, N]).
 cetakKartu(kartu(Warna, Jenis)) :-
@@ -52,7 +50,6 @@ tampilkanUrutan([H|T]) :-
     format('~w - ', [H]),
     tampilkanUrutan(T).
 
-% Penyesuaian pembuatan deck untuk struktur kartu(W, angka(N))
 buatDeckBaru(Deck) :-
     DaftarWarna = [merah, kuning, hijau, biru],
     DaftarAngka = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
