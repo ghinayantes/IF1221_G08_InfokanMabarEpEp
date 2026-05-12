@@ -1,36 +1,23 @@
-:- dynamic lastCard/1.
-
 lihatCommand :-
-    kondisiDrawFour,
-    !,
-    commandDrawFour.
-
-lihatCommand :-
-    commandNormal.
-
-kondisiDrawFour :-
-    lastCard(hitam-wild_draw_four).
+    (kartuTeratas(kartu(hitam, wildDrawFour)) -> commandDrawFour ; commandNormal).
 
 commandDrawFour :-
     write('Aksi utama yang tersedia:'), nl,
     write('1. ambilKartu'), nl,
     write('2. tantang'), nl,
-
-    write('Aksi pendukung yang tersedia:'), nl,
-    write('1. lihatCommand'), nl,
-    write('2. lihatKartu'), nl,
-    write('3. cekInfo'), nl.
+    tampilkanAksiPendukung.
 
 commandNormal :-
     write('Aksi utama yang tersedia:'), nl,
     write('1. mainkanKartu(NomorUrut)'), nl,
     write('2. ambilKartu'), nl,
     write('3. uni'), nl,
-    write('4. godsHand'), nl,
-    write('5. sembunyikanKartu(NomorUrut)'), nl,
-    write('6. tampilkanKartu'), nl,
+    tampilkanAksiPendukung.
 
+tampilkanAksiPendukung :-
     write('Aksi pendukung yang tersedia:'), nl,
     write('1. lihatCommand'), nl,
+    write('2. lihatKartu'), nl,
+    write('3. cekInfo'), nl.
     write('2. lihatKartu'), nl,
     write('3. cekInfo'), nl.
