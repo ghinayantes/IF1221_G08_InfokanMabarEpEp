@@ -9,6 +9,7 @@ ambilTujuh(N, [K|R], [K|Ks], D) :-
     N > 0, N1 is N - 1,
     ambilTujuh(N1, R, Ks, D).
 
+cekKartuValid(kartu(W, angka(_))) :- W \= hitam, !. 
 cekKartuValid(kartu(W, J)) :-
     W \= hitam,
     \+ member(J, [skip, reverse, drawTwo, wild, wildDrawFour]).
@@ -63,15 +64,20 @@ kumpulkanSemuaKartu(Warnas, Angkas, Aksis, Hitams, Hasil) :-
     buatKartuAngka(Warnas, Angkas, BagianAngka),
     buatKartuAksi(Warnas, Aksis, BagianAksi),
     buatKartuHitam(Hitams, BagianHitam),
-    append(BagianAngka, BagianAksi, Temp),
-    append(Temp, BagianHitam, Hasil).
+    gabungList(BagianAngka, BagianAksi, Temp),
+    gabungList(Temp, BagianHitam, Hasil).
 
-% Rekursi untuk kartu angka(N)
-buatKartuAngka([], _, []).
+buatKartuAngka([], _, []). 
 buatKartuAngka([W|RestW], Angkas, Hasil) :-
     kombinasiAngka(W, Angkas, KartuWarna),
     buatKartuAngka(RestW, Angkas, RestHasil),
-    append(KartuWarna, RestHasil, Hasil).
+    gabungList(KartuWarna, RestHasil, Hasil).
+
+buatKartuAksi([], _, []).
+buatKartuAksi([W|RestW], Aksis, Hasil) :-
+    kombinasiAksi(W, Aksis, KartuWarna),
+    buatKartuAksi(RestW, Aksis, RestHasil),
+    gabungList(KartuWarna, RestHasil, Hasil).
 
 kombinasiAngka(_, [], []).
 kombinasiAngka(W, [N|RestN], [kartu(W, angka(N)), kartu(W, angka(N)) | RestHasil]) :-
@@ -79,13 +85,6 @@ kombinasiAngka(W, [N|RestN], [kartu(W, angka(N)), kartu(W, angka(N)) | RestHasil
     kombinasiAngka(W, RestN, RestHasil).
 kombinasiAngka(W, [0|RestN], [kartu(W, angka(0)) | RestHasil]) :-
     kombinasiAngka(W, RestN, RestHasil).
-
-% Rekursi untuk kartu aksi (skip, reverse, drawTwo)
-buatKartuAksi([], _, []).
-buatKartuAksi([W|RestW], Aksis, Hasil) :-
-    kombinasiAksi(W, Aksis, KartuWarna),
-    buatKartuAksi(RestW, Aksis, RestHasil),
-    append(KartuWarna, RestHasil, Hasil).
 
 kombinasiAksi(_, [], []).
 kombinasiAksi(W, [A|RestA], [kartu(W, A), kartu(W, A) | RestHasil]) :-
@@ -95,3 +94,8 @@ kombinasiAksi(W, [A|RestA], [kartu(W, A), kartu(W, A) | RestHasil]) :-
 buatKartuHitam([], []).
 buatKartuHitam([H|RestH], [kartu(hitam, H), kartu(hitam, H), kartu(hitam, H), kartu(hitam, H) | RestHasil]) :-
     buatKartuHitam(RestH, RestHasil).
+
+% helper
+gabungList([], L, L).
+gabungList([H|T], L, [H|R]) :-
+    gabungList(T, L, R).

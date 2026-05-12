@@ -19,34 +19,34 @@
 startGame :-
     write('Masukkan jumlah pemain: '),
     read(N),
-    prosesInputPemain(N).
+    (N >= 2, N =< 4 -> nl, inputNamaPemain(N, [], DaftarNama),
+    inisialisasiGame(DaftarNama) ; write('Mohon masukkan angka antara 2 - 4.'), nl, startGame).
 
 inisialisasiGame(DaftarNama) :-
     hapusDataLama,
     acakList(DaftarNama, UrutanBaru),
     buatDeckBaru(DeckLengkap),
     bagiKartuPemain(UrutanBaru, DeckLengkap, DeckSisa),
-    setKartuAwal(DeckSisa, KartuAwal, DeckFinal),
+
+    (setKartuAwal(DeckSisa, KartuAwal, DeckFinal) -> true ; 
+        write('Gagal menetapkan kartu awal!'), nl, fail),
     
     assertz(urutanPemain(UrutanBaru)),
-    UrutanBaru = [Pertama|_],
-    assertz(giliranSekarang(Pertama)),
+    UrutanBaru = [P1|_], 
+    assertz(giliranSekarang(P1)),
     assertz(kartuTeratas(KartuAwal)),
-    KartuAwal = kartu(W, _), assertz(warnaAktif(W)),
+    
+    KartuAwal = kartu(W, _), 
+    assertz(warnaAktif(W)),
+    
     assertz(arahPermainan(kanan)),
     assertz(statusUni([])),
-    assertz(sisaDeck(DeckFinal)),
-    
-    nl,
-    format('Urutan pemain: ', []),
-    tampilkanUrutan(UrutanBaru),
-    write('.'), nl, nl,
-    format('Setiap pemain mendapatkan 7 kartu acak.', []), nl, nl,
-    format('Kartu discard top: ', []),
-    cetakKartu(KartuAwal),
-    nl, nl,
-    format('Giliran ~w.~n', [Pertama]),
-    !.
+    assertz(sisaDeck(DeckFinal)), nl,
+
+    write('Urutan pemain: '), tampilkanUrutan(UrutanBaru), write('.'), nl, nl,
+    write('Setiap pemain mendapatkan 7 kartu acak.'), nl, nl,
+    write('Kartu discard top: '), cetakKartu(KartuAwal), nl, nl,
+    format('Giliran ~w.~n', [P1]), !.
 
 hapusDataLama :-
     retractall(urutanPemain(_)),
