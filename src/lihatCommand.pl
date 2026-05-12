@@ -19,3 +19,5 @@ tampilkanAksiPendukung :-
     write('1. lihatCommand'), nl,
     write('2. lihatKartu'), nl,
     write('3. cekInfo'), nl.
+    write('2. lihatKartu'), nl,
+    write('3. cekInfo'), nl.
