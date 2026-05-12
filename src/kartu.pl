@@ -1,11 +1,3 @@
-:- dynamic(kartudiTangan/2).  % kartudiTangan(Pemain, ListKartu)
-:- dynamic(kartuTeratas/2).   % kartuTeratas(Warna, Jenis)
-:- dynamic(pemainSaatIni/1).  % Giliran siapa
-:- dynamic(arahSaatIni/1).    % berlawanan/searah jarum jam
-:- dynamic(efekSkip/1). 
-:- dynamic(pemainSelanjutnya/1).
-:- dynamic(skipPemain/1).
-
 /* Deklarasi Fakta */
 /* Variasi Kartu */
 angka(0).
@@ -79,7 +71,7 @@ eksekusiEfek(reverse) :- efekReverse(reverse).
 eksekusiEfek(drawTwo) :- efekDrawtwo(drawTwo).
 eksekusiEfek(wild) :- efekWild(wild).
 eksekusiEfek(wildDrawFour) :- efekWildrawFour(wildDrawFour).
-eksekusiEfek(angka(_)) :- writeln('Tidak ada efek spesial.').
+eksekusiEfek(angka(_)) :- write('Tidak ada efek spesial.'), nl.
 
 /* Syarat Dasar Permainan */
 lempar(kartu(Warna, _), kartu(Warna, _)).
@@ -88,11 +80,6 @@ lempar(kartu(_, Jenis), kartu(_, Jenis)).
 /* Syarat Kartu Wild */
 lempar(kartu(hitam, wild), _).
 lempar(kartu(hitam, wildDrawFour), _).
-
-/* Deklarasi Rules */
-/* Definisi Member */
-member(X, [X|_]). 
-member(X, [_|T]) :- member(X, T).
 
 /* Cek Kesamaan Kartu di Tangan dan di Meja*/
 cekKesamaan(kartu(W, _), W, _).
@@ -105,29 +92,38 @@ cekKesamaan(kartu(hitam, wildDrawFour), WMeja, JMeja):-giliranSekarang(P), bisaL
 efekSkip(skip) :-
     pemainSelanjutnya(Target),
     skipPemain(Target),
-    write('Pemain '), write(Target), writeln(' telah di skip').
+    write('Pemain '), write(Target), write(' telah di skip'), nl.
 
 efekReverse(reverse) :-
-    arahSaatIni(Arah),
-    (Arah == searahJarumJam -> ArahBaru = berlawananJarumJam ; ArahBaru = searahJarumJam),
-    retract(arahSaatIni(Arah)),
-    asserta(arahSaatIni(ArahBaru)),
-    writeln('Arah sukses dibalik').
+    arahPermainan(Arah),
+    (Arah == kanan -> ArahBaru = kiri ; ArahBaru = kanan),
+    retract(arahPermainan(Arah)),
+    asserta(arahPermainan(ArahBaru)),
+    write('Arah sukses dibalik'), nl.
 
 efekDrawtwo(drawTwo) :-
     pemainSelanjutnya(Target),
     ambilKartu(Target, 2),
     skipPemain(Target), 
-    writeln('Pemain selanjutnya ambil 2 kartu').
+    write('Pemain selanjutnya ambil 2 kartu'), nl.
+
+pemainSelanjutnya(Target) :-
+    arahPermainan(Arah),
+    giliranSekarang(Sekarang),
+    urutanPemain(List),
+    tentukanSelanjutnya(Arah, Sekarang, List, Target).
+
+skipPemain(_) :- 
+    gantiGiliran.
 
 efekWild(wild) :-
-    writeln('Pilih warna: (merah, kuning, hijau, biru).').
+    write('Pilih warna: (merah, kuning, hijau, biru).'), nl.
 
 efekWildrawFour(wildDrawFour) :-
     pemainSelanjutnya(Target),
     ambilKartu(Target, 4),
     skipPemain(Target),
-    writeln('Pemain selanjutnya ambil 4 kartu dan warna berubah').
+    write('Pemain selanjutnya ambil 4 kartu dan warna berubah'), nl.
 
 bisaLemparWilDrawFour(Pemain, WarnaSaatIni) :-
-    \+ (kartudiTangan(Pemain, ListKartu), member(kartu(WarnaSaatIni, _), ListKartu)).
+    \+ (kartuTangan(Pemain, ListKartu), member(kartu(WarnaSaatIni, _), ListKartu)).
