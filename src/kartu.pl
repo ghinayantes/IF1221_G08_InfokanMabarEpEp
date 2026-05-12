@@ -91,7 +91,7 @@ cekKesamaan(kartu(W, _), W, _).
 cekKesamaan(kartu(_, J), _, J).
 cekKesamaan(kartu(_, angka(N)), _, angka(N)).
 cekKesamaan(kartu(hitam, wild), _, _).
-cekKesamaan(kartu(hitam, wildDrawFour), _, _).
+cekKesamaan(kartu(hitam, wildDrawFour), WMeja, JMeja):-giliranSekarang(P), bisaLemparWilDrawFour(P, WMeja).
 
 /* Eksekusi Efek Kartu */
 efekSkip(skip) :-
