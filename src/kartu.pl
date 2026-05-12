@@ -2,6 +2,9 @@
 :- dynamic(kartuTeratas/2).   % kartuTeratas(Warna, Jenis)
 :- dynamic(pemainSaatIni/1).  % Giliran siapa
 :- dynamic(arahSaatIni/1).    % berlawanan/searah jarum jam
+:- dynamic(efekSkip/1). 
+:- dynamic(pemainSelanjutnya/1).
+:- dynamic(skipPemain/1).
 
 /* Deklarasi Fakta */
 /* Variasi Kartu */
