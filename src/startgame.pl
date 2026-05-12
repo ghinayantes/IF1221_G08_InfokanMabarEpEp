@@ -14,6 +14,7 @@
 :- include('lihatCommand.pl').
 :- include('ambilKartu.pl').
 :- include('mainkanKartu.pl').
+:- include('cekInfo.pl').
 
 startGame :-
     write('Masukkan jumlah pemain: '),

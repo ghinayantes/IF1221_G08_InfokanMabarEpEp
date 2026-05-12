@@ -25,16 +25,6 @@ help :-
     write('- cekInfo.        : Melihat status giliran, arah, dan warna aktif.'), nl,
     write('- exit.           : Menutup terminal permainan.'), nl.
 
-% Predikat untuk mengecek status permainan secara menyeluruh
-cekInfo :-
-    (giliranSekarang(P) ->
-        format('Giliran saat ini: ~w~n', [P]),
-        (arahPermainan(Arah) -> format('Arah permainan  : ~w~n', [Arah]) ; true),
-        (warnaAktif(W) -> format('Warna aktif     : ~w~n', [W]) ; true),
-        (kartuTeratas(K) -> write('Kartu di meja   : '), cetakKartu(K), nl ; true)
-    ;   write('Permainan belum dimulai. Ketik "start." untuk mulai.'), nl
-    ).
-
 % Predikat untuk keluar
 exit :-
     hapusDataLama.
