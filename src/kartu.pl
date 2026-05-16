@@ -1,55 +1,129 @@
 /* Deklarasi Fakta */
-bentukKartu(merah, 0).
-bentukKartu(kuning, 0).
-bentukKartu(hijau, 0).
-bentukKartu(biru, 0).
-bentukKartu(merah, 1).
-bentukKartu(kuning, 1).
-bentukKartu(hijau, 1).
-bentukKartu(biru, 1).
-bentukKartu(merah, 2).
-bentukKartu(kuning, 2).
-bentukKartu(hijau, 2).
-bentukKartu(biru, 2).
-bentukKartu(merah, 3).
-bentukKartu(kuning, 3).
-bentukKartu(hijau, 3).
-bentukKartu(biru, 3).
-bentukKartu(merah, 4).
-bentukKartu(kuning, 4).
-bentukKartu(hijau, 4).
-bentukKartu(biru, 4).
-bentukKartu(merah, 5).
-bentukKartu(kuning, 5).
-bentukKartu(hijau, 5).
-bentukKartu(biru, 5).
-bentukKartu(merah, 6).
-bentukKartu(kuning, 6).
-bentukKartu(hijau, 6).
-bentukKartu(biru, 6).
-bentukKartu(merah, 7).
-bentukKartu(kuning, 7).
-bentukKartu(hijau, 7).
-bentukKartu(biru, 7).
-bentukKartu(merah, 8).
-bentukKartu(kuning, 8).
-bentukKartu(hijau, 8).
-bentukKartu(biru, 8).
-bentukKartu(merah, 9).
-bentukKartu(kuning, 9).
-bentukKartu(hijau, 9).
-bentukKartu(biru, 9).
-bentukKartu(merah, skip).
-bentukKartu(kuning, skip).
-bentukKartu(hijau, skip).
-bentukKartu(biru, skip).
-bentukKartu(merah, reverse).
-bentukKartu(kuning, reverse).
-bentukKartu(hijau, reverse).
-bentukKartu(biru, reverse).
-bentukKartu(merah, drawTwo).
-bentukKartu(kuning, drawTwo).
-bentukKartu(hijau, drawTwo).
-bentukKartu(biru, drawTwo).
-bentukKartu(hitam, wild).
-bentukKartu(hitam, wildDrawFour).
+/* Variasi Kartu */
+angka(0).
+angka(1).
+angka(2).
+angka(3).
+angka(4).
+angka(5).
+angka(6).
+angka(7).
+angka(8).
+angka(9).
+kartu(merah, angka(0)).
+kartu(kuning, angka(0)).
+kartu(hijau, angka(0)).
+kartu(biru, angka(0)).
+kartu(merah, angka(1)).
+kartu(kuning, angka(1)).
+kartu(hijau, angka(1)).
+kartu(biru, angka(1)).
+kartu(merah, angka(2)).
+kartu(kuning, angka(2)).
+kartu(hijau, angka(2)).
+kartu(biru, angka(2)).
+kartu(merah, angka(3)).
+kartu(kuning, angka(3)).
+kartu(hijau, angka(3)).
+kartu(biru, angka(3)).
+kartu(merah, angka(4)).
+kartu(kuning, angka(4)).
+kartu(hijau, angka(4)).
+kartu(biru, angka(4)).
+kartu(merah, angka(5)).
+kartu(kuning, angka(5)).
+kartu(hijau, angka(5)).
+kartu(biru, angka(5)).
+kartu(merah, angka(6)).
+kartu(kuning, angka(6)).
+kartu(hijau, angka(6)).
+kartu(biru, angka(6)).
+kartu(merah, angka(7)).
+kartu(kuning, angka(7)).
+kartu(hijau, angka(7)).
+kartu(biru, angka(7)).
+kartu(merah, angka(8)).
+kartu(kuning, angka(8)).
+kartu(hijau, angka(8)).
+kartu(biru, angka(8)).
+kartu(merah, angka(9)).
+kartu(kuning, angka(9)).
+kartu(hijau, angka(9)).
+kartu(biru, angka(9)).
+kartu(merah, skip).
+kartu(kuning, skip).
+kartu(hijau, skip).
+kartu(biru, skip).
+kartu(merah, reverse).
+kartu(kuning, reverse).
+kartu(hijau, reverse).
+kartu(biru, reverse).
+kartu(merah, drawTwo).
+kartu(kuning, drawTwo).
+kartu(hijau, drawTwo).
+kartu(biru, drawTwo).
+kartu(hitam, wild).
+kartu(hitam, wildDrawFour).
+
+/* Efek Kartu */
+eksekusiEfek(skip) :- efekSkip(skip).
+eksekusiEfek(reverse) :- efekReverse(reverse).
+eksekusiEfek(drawTwo) :- efekDrawtwo(drawTwo).
+eksekusiEfek(wild) :- efekWild(wild).
+eksekusiEfek(wildDrawFour) :- efekWildrawFour(wildDrawFour).
+eksekusiEfek(angka(_)) :- write('Tidak ada efek spesial.'), nl.
+
+/* Syarat Dasar Permainan */
+lempar(kartu(Warna, _), kartu(Warna, _)).
+lempar(kartu(_, Jenis), kartu(_, Jenis)).
+
+/* Syarat Kartu Wild */
+lempar(kartu(hitam, wild), _).
+lempar(kartu(hitam, wildDrawFour), _).
+
+/* Cek Kesamaan Kartu di Tangan dan di Meja*/
+cekKesamaan(kartu(W, _), W, _).
+cekKesamaan(kartu(_, J), _, J).
+cekKesamaan(kartu(_, angka(N)), _, angka(N)).
+cekKesamaan(kartu(hitam, wild), _, _).
+cekKesamaan(kartu(hitam, wildDrawFour), WMeja, JMeja):-giliranSekarang(P), bisaLemparWilDrawFour(P, WMeja).
+
+/* Eksekusi Efek Kartu */
+efekSkip(skip) :-
+    pemainSelanjutnya(Target),
+    skipPemain(Target),
+    write('Pemain '), write(Target), write(' telah di skip'), nl.
+
+efekReverse(reverse) :-
+    arahPermainan(Arah),
+    (Arah == kanan -> ArahBaru = kiri ; ArahBaru = kanan),
+    retract(arahPermainan(Arah)),
+    asserta(arahPermainan(ArahBaru)),
+    write('Arah sukses dibalik'), nl.
+
+efekDrawtwo(drawTwo) :-
+    pemainSelanjutnya(Target),
+    ambilKartu(Target, 2),
+    skipPemain(Target), 
+    write('Pemain selanjutnya ambil 2 kartu'), nl.
+
+pemainSelanjutnya(Target) :-
+    arahPermainan(Arah),
+    giliranSekarang(Sekarang),
+    urutanPemain(List),
+    tentukanSelanjutnya(Arah, Sekarang, List, Target).
+
+skipPemain(_) :- 
+    gantiGiliran.
+
+efekWild(wild) :-
+    write('Pilih warna: (merah, kuning, hijau, biru).'), nl.
+
+efekWildrawFour(wildDrawFour) :-
+    pemainSelanjutnya(Target),
+    ambilKartu(Target, 4),
+    skipPemain(Target),
+    write('Pemain selanjutnya ambil 4 kartu dan warna berubah'), nl.
+
+bisaLemparWilDrawFour(Pemain, WarnaSaatIni) :-
+    \+ (kartuTangan(Pemain, ListKartu), member(kartu(WarnaSaatIni, _), ListKartu)).
