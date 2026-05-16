@@ -58,17 +58,35 @@ gantiGiliran :-
     retract(giliranSekarang(_)),
     asserta(giliranSekarang(Next)),
     write('Giliran pindah ke: '), write(Next), nl.
-
-
+    
+/* main ke kanan, pemain masih di tengah urutan */
 tentukanSelanjutnya(kanan, Sekarang, ListPemain, Next) :-
-    append(_, [Sekarang, Next|_], ListPemain), !.
+    sebelahKanan(Sekarang, Next, ListPemain), !.
 
+/* main ke kanan, pemain di urutan terakhir */
 tentukanSelanjutnya(kanan, _, ListPemain, Next) :-
-    ListPemain = [Next|_], !. 
+    ListPemain = [Next|_], !.
 
+/* main ke kiri, pemain masih di tengah urutan */
 tentukanSelanjutnya(kiri, Sekarang, ListPemain, Next) :-
-    append(_, [Next, Sekarang|_], ListPemain), !.
+    sebelahKiri(Sekarang, Next, ListPemain), !.
 
-tentukanSelanjutnya(kiri, Sekarang, ListPemain, Next) :-
-    ListPemain = [Sekarang|_], 
-    last(ListPemain, Next), !.
+/* main ke kiri, pemain di urutan pertama */
+tentukanSelanjutnya(kiri, _, ListPemain, Next) :-
+    cariTerakhir(ListPemain, Next), !.
+
+/* helper pengganti append */
+/* sebelahKanan: Next adalah elemen tepat setelah Sekarang */
+sebelahKanan(Sekarang, Next, [Sekarang, Next | _]).
+sebelahKanan(Sekarang, Next, [_ | Tail]) :- 
+    sebelahKanan(Sekarang, Next, Tail).
+
+/* sebelahKiri: Next adalah elemen tepat sebelum Sekarang */
+sebelahKiri(Sekarang, Next, [Next, Sekarang | _]).
+sebelahKiri(Sekarang, Next, [_ | Tail]) :- 
+    sebelahKiri(Sekarang, Next, Tail).
+
+/* cariTerakhir: mencari elemen paling ujung (terakhir) dari list */
+cariTerakhir([X], X).
+cariTerakhir([_ | Tail], Terakhir) :- 
+    cariTerakhir(Tail, Terakhir).
