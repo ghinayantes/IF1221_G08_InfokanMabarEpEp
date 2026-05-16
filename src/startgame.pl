@@ -6,6 +6,10 @@
 :- dynamic(arahPermainan/1).
 :- dynamic(statusUni/1).
 :- dynamic(sisaDeck/1).
+%bonus tantang
+:- dynamic(pemainSebelumnya/1).
+:- dynamic(warnaSebelumnya/1).
+:- dynamic(statusAncaman/1).
 
 :- include('kartu.pl').
 
@@ -130,7 +134,10 @@ hapusDataLama :-
     retractall(arahPermainan(_)),
     retractall(statusUni(_)),
     retractall(sisaDeck(_)).
-
+    %bonus tantang
+    retractall(pemainSebelumnya(_)),
+    retractall(warnaSebelumnya(_)),
+    retractall(statusAncaman(_)).
 
 /* 
 Daftar Query yang bisa digunakan:
