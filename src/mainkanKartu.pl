@@ -12,6 +12,13 @@ mainkanKartu(NomorUrut) :-
     retract(kartuTangan(Pemain, _)),
     asserta(kartuTangan(Pemain, SisaTangan)),
     
+    % update setelah pembuatan endGame
+    (
+        SisaTangan = []
+        -> endGame
+        ; true
+    ),
+    
     retract(kartuTeratas(_)),
     asserta(kartuTeratas(KartuPilihan)),
     
