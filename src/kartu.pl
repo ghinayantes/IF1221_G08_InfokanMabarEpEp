@@ -86,7 +86,7 @@ cekKesamaan(kartu(W, _), W, _).
 cekKesamaan(kartu(_, J), _, J).
 cekKesamaan(kartu(_, angka(N)), _, angka(N)).
 cekKesamaan(kartu(hitam, wild), _, _).
-cekKesamaan(kartu(hitam, wildDrawFour), WMeja, JMeja):-giliranSekarang(P), bisaLemparWilDrawFour(P, WMeja).
+cekKesamaan(kartu(hitam, wildDrawFour), _, _).
 
 /* Eksekusi Efek Kartu */
 efekSkip(skip) :-
@@ -124,6 +124,3 @@ efekWildrawFour(wildDrawFour) :-
     ambilKartu(Target, 4),
     skipPemain(Target),
     write('Pemain selanjutnya ambil 4 kartu dan warna berubah'), nl.
-
-bisaLemparWilDrawFour(Pemain, WarnaSaatIni) :-
-    \+ (kartuTangan(Pemain, ListKartu), member(kartu(WarnaSaatIni, _), ListKartu)).
