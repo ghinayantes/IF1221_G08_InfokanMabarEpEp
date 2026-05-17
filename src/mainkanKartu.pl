@@ -1,16 +1,14 @@
-%bonus tantang------------------------------------------------
 mainkanKartu(_) :- %jika sedang di tantang tidak bisa mainkan kartu
     statusAncaman(aktif),
     write('Anda sedang terkena efek Wild Draw Four!'), nl,
     write('Pilih perintah: "tantang." atau "ambilKartu."'), nl,
-    !, fail. 
-%------------------------------------------------------------
+    !, fail.
 
 mainkanKartu(NomorUrut) :-
     giliranSekarang(Pemain),
     kartuTangan(Pemain, Tangan),
     
-    nth1(NomorUrut, Tangan, KartuPilihan),
+    ambilKartuManual(NomorUrut, Tangan, KartuPilihan),
     KartuPilihan = kartu(Warna, Jenis),
     
     cekValid(Warna, Jenis),
@@ -18,23 +16,22 @@ mainkanKartu(NomorUrut) :-
     
     select(KartuPilihan, Tangan, SisaTangan),
     retract(kartuTangan(Pemain, _)),
-    asserta(kartuTangan(Pemain, SisaTangan)),
+    assertz(kartuTangan(Pemain, SisaTangan)),
     
     retract(kartuTeratas(_)),
-    asserta(kartuTeratas(KartuPilihan)),
+    assertz(kartuTeratas(KartuPilihan)),
 
-    %bonus tantang------------------------------------------------
+    %bonus tantang
     warnaAktif(WarnaLama),
     retractall(warnaSebelumnya(_)),
-    asserta(warnaSebelumnya(WarnaLama)),
+    assertz(warnaSebelumnya(WarnaLama)),
     retractall(pemainSebelumnya(_)),
-    asserta(pemainSebelumnya(Pemain)),
+    assertz(pemainSebelumnya(Pemain)),
 
-    (Jenis==wildDrawFour -> retractall(statusAncaman(_)), asserta(statusAncaman(aktif))
+    (Jenis==wildDrawFour -> retractall(statusAncaman(_)), assertz(statusAncaman(aktif))
                             ;
-                            retractall(statusAncaman(_)), asserta(statusAncaman(aman))
+                            retractall(statusAncaman(_)), assertz(statusAncaman(aman))
                             ),
-    %------------------------------------------------------------
 
     updateWarnaAktif(Warna),
     
@@ -55,6 +52,14 @@ mainkanKartu(_) :-
             eksekusiEfek(Jenis)
         )
     ).
+
+ambilKartuManual(1, [KartuYangDicari | _], KartuYangDicari) :- !.
+
+/* jika lebih dari 1, cari di sisa list */
+ambilKartuManual(NomorUrut, [_ | Tail], KartuYangDicari) :-
+    NomorUrut > 1,
+    UrutanSelanjutnya is NomorUrut - 1,
+    ambilKartuManual(UrutanSelanjutnya, Tail, KartuYangDicari).
 
 /* helper syarat validasi kartu */
 /* dilempar jika warnanya sama dengan warna aktif di meja */
@@ -77,7 +82,7 @@ updateWarnaAktif(hitam) :- !.
 /* jika bukan hitam, ubah warna meja sesuai kartu */
 updateWarnaAktif(Warna) :-
     retract(warnaAktif(_)),
-    asserta(warnaAktif(Warna)).
+    assertz(warnaAktif(Warna)).
 
 /* helper pindah giliran */
 gantiGiliran :-
@@ -88,7 +93,7 @@ gantiGiliran :-
     tentukanSelanjutnya(Arah, Sekarang, ListPemain, Next),
     
     retract(giliranSekarang(_)),
-    asserta(giliranSekarang(Next)),
+    assertz(giliranSekarang(Next)),
     write('Giliran pindah ke: '), write(Next), nl.
     
 /* main ke kanan, pemain masih di tengah urutan */
@@ -138,12 +143,12 @@ tantang :-
         write('Tantangan berhasil! '), write(Tertantang), write(' mendapatkan 4 kartu.'), nl,
         ambilKartu(Tertantang, 4),
         retractall(statusAncaman(_)), 
-        asserta(statusAncaman(aman))
+        assertz(statusAncaman(aman))
     ;   %kartu di meja tidak ada di tangan tertantang
         format('Tantangan gagal. ~w mendapatkan 6 kartu acak. ~n', [Penantang]), 
         ambilKartu(Penantang, 6),
         retractall(statusAncaman(_)),
-        asserta(statusAncaman(aman)),
+        assertz(statusAncaman(aman)),
         gantiGiliran
     ).
 %tidak ada yang tantang
