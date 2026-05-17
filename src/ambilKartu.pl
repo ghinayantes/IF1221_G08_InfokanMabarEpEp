@@ -1,3 +1,14 @@
+%bonus tantang------------------------------------------------
+ambilKartu :- %pemain pilih ambilkartu, bukan tantang
+    statusAncaman(aktif), !, 
+    giliranSekarang(Pemain),
+    write('Anda memilih tidak menantang.'), nl,
+    ambilKartu(Pemain, 4),
+    retractall(statusAncaman(_)),
+    asserta(statusAncaman(aman)),
+    gantiGiliran.
+%------------------------------------------------------------
+
 ambilKartu :-
     giliranSekarang(Pemain),
     sisaDeck([KartuBaru|SisaDeckBaru]),
