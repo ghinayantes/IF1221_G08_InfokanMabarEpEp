@@ -45,6 +45,17 @@ mainkanKartu(NomorUrut) :-
 mainkanKartu(_) :-
     write('Gagal memainkan. Nomor urut salah atau kartu tidak cocok dengan meja!'), nl.
 
+    (SisaTangan == [] -> 
+        endGame(Pemain)
+    ;   
+        (Jenis == wildDrawFour -> 
+            gantiGiliran, giliranSekarang(Next),
+            format('Giliran ~w.~n', [Next]) 
+        ; 
+            eksekusiEfek(Jenis)
+        )
+    ).
+
 /* helper syarat validasi kartu */
 /* dilempar jika warnanya sama dengan warna aktif di meja */
 cekValid(WarnaPilihan, _) :-
