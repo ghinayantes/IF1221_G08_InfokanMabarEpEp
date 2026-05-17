@@ -115,3 +115,4 @@ sebelahKiri(Sekarang, Next, [_ | Tail]) :-
 cariTerakhir([X], X).
 cariTerakhir([_ | Tail], Terakhir) :- 
     cariTerakhir(Tail, Terakhir).
+    last(ListPemain, Next), !.
