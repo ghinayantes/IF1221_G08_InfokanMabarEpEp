@@ -71,7 +71,11 @@ eksekusiEfek(reverse) :- efekReverse(reverse).
 eksekusiEfek(drawTwo) :- efekDrawtwo(drawTwo).
 eksekusiEfek(wild) :- efekWild(wild).
 eksekusiEfek(wildDrawFour) :- efekWildrawFour(wildDrawFour).
-eksekusiEfek(angka(_)) :- write('Tidak ada efek spesial.'), nl.
+eksekusiEfek(angka(_)) :- 
+    write('Tidak ada efek spesial.'), nl,
+    gantiGiliran,
+    giliranSekarang(Next),
+    format('Giliran ~w.~n', [Next]).
 
 /* Syarat Dasar Permainan */
 lempar(kartu(Warna, _), kartu(Warna, _)).
@@ -86,20 +90,26 @@ cekKesamaan(kartu(W, _), W, _).
 cekKesamaan(kartu(_, J), _, J).
 cekKesamaan(kartu(_, angka(N)), _, angka(N)).
 cekKesamaan(kartu(hitam, wild), _, _).
-cekKesamaan(kartu(hitam, wildDrawFour), WMeja, JMeja):-giliranSekarang(P), bisaLemparWilDrawFour(P, WMeja).
+cekKesamaan(kartu(hitam, wildDrawFour), _, _).
 
 /* Eksekusi Efek Kartu */
 efekSkip(skip) :-
     pemainSelanjutnya(Target),
     skipPemain(Target),
-    write('Pemain '), write(Target), write(' telah di skip'), nl.
+    write('Pemain berikutnya telah dilewati'), nl,
+    gantiGiliran, 
+    giliranSekarang(Next),
+    format('Giliran ~w.~n', [Next]).
 
 efekReverse(reverse) :-
     arahPermainan(Arah),
     (Arah == kanan -> ArahBaru = kiri ; ArahBaru = kanan),
     retract(arahPermainan(Arah)),
     asserta(arahPermainan(ArahBaru)),
-    write('Arah sukses dibalik'), nl.
+    write('Arah sukses dibalik'), nl,
+    gantiGiliran,
+    giliranSekarang(Next),
+    format('Giliran ~w.~n', [Next]).
 
 efekDrawtwo(drawTwo) :-
     pemainSelanjutnya(Target),
@@ -117,13 +127,22 @@ skipPemain(_) :-
     gantiGiliran.
 
 efekWild(wild) :-
-    write('Pilih warna: (merah, kuning, hijau, biru).'), nl.
+    write('Pilih warna: (merah, kuning, hijau, biru).'), nl,
+    read(WarnaBaru), 
+    (member(WarnaBaru, [merah, kuning, hijau, biru]) ->
+        retract(warnaAktif(_)),
+        asserta(warnaAktif(WarnaBaru)),
+        format('Warna berubah menjadi ~w.~n', [WarnaBaru]),
+        gantiGiliran,
+        giliranSekarang(Next),
+        format('Giliran ~w.~n', [Next])
+    ;
+        write('Warna tidak valid! Pilih kembali.'), nl, 
+        efekWild(wild) 
+    ).
 
 efekWildrawFour(wildDrawFour) :-
     pemainSelanjutnya(Target),
     ambilKartu(Target, 4),
     skipPemain(Target),
     write('Pemain selanjutnya ambil 4 kartu dan warna berubah'), nl.
-
-bisaLemparWilDrawFour(Pemain, WarnaSaatIni) :-
-    \+ (kartuTangan(Pemain, ListKartu), member(kartu(WarnaSaatIni, _), ListKartu)).
