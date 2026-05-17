@@ -1,3 +1,9 @@
+mainkanKartu(_) :- %jika sedang ditantang tidak bisa mainkan kartu
+    statusAncaman(aktif),
+    write('Anda sedang terkena efek Wild Draw Four!'), nl,
+    write('Pilih perintah: "tantang." atau "ambilKartu."'), nl,
+    !, fail. 
+
 mainkanKartu(NomorUrut) :-
     giliranSekarang(Pemain),
     kartuTangan(Pemain, Tangan),
@@ -12,21 +18,31 @@ mainkanKartu(NomorUrut) :-
     retract(kartuTangan(Pemain, _)),
     asserta(kartuTangan(Pemain, SisaTangan)),
     
-    % update setelah pembuatan endGame
-    (
-        SisaTangan = []
-        -> endGame
-        ; true
-    ),
-    
     retract(kartuTeratas(_)),
     asserta(kartuTeratas(KartuPilihan)),
-    
-    updateWarnaAktif(Warna),
-    
-    write('Berhasil memainkan: '), cetakKartu(KartuPilihan), nl,
 
-    eksekusiEfek(Jenis).
+    % bonus tantang
+    warnaAktif(WarnaLama),
+    kartuTeratas(kartu(_, JenisLama)), 
+    
+    retractall(warnaSebelumnya(_)),
+    asserta(warnaSebelumnya(WarnaLama)),
+    retractall(jenisSebelumnya(_)),    
+    asserta(jenisSebelumnya(JenisLama)), 
+    
+    retractall(pemainSebelumnya(_)),
+    asserta(pemainSebelumnya(Pemain)),
+
+    (Jenis == wildDrawFour -> retractall(statusAncaman(_)), asserta(statusAncaman(aktif))
+                            ;
+                            retractall(statusAncaman(_)), asserta(statusAncaman(aman))
+                            ),
+
+    updateWarnaAktif(Warna),
+    format('~w memainkan kartu: ', [Pemain]), cetakKartu(KartuPilihan), write('.'), nl,
+
+    (Jenis == wildDrawFour -> gantiGiliran, giliranSekarang(Next),
+        format('Giliran ~w.~n', [Next]) ; eksekusiEfek(Jenis)).
 
 mainkanKartu(_) :-
     write('Gagal memainkan. Nomor urut salah atau kartu tidak cocok dengan meja!'), nl.
@@ -43,7 +59,10 @@ cekValid(_, JenisPilihan) :-
     JenisPilihan == JenisTop.
 
 /* dilempar jika itu kartu hitam (wild/wild draw four) */
-cekValid(hitam, _).
+cekValid(hitam, _) :-
+    kartuTeratas(kartu(_, JenisTop)),
+    % Pastikan kartu teratas di meja bukan wild dan BUKAN wildDrawFour
+    \+ member(JenisTop, [wild, wildDrawFour]).
 
 /* helper update warna aktif */
 /* Jika kartu hitam, jangan ubah warna meja di sini */
@@ -63,19 +82,37 @@ gantiGiliran :-
     tentukanSelanjutnya(Arah, Sekarang, ListPemain, Next),
     
     retract(giliranSekarang(_)),
-    asserta(giliranSekarang(Next)),
-    write('Giliran pindah ke: '), write(Next), nl.
-
-
+    asserta(giliranSekarang(Next)).
+    
+/* main ke kanan, pemain masih di tengah urutan */
 tentukanSelanjutnya(kanan, Sekarang, ListPemain, Next) :-
-    append(_, [Sekarang, Next|_], ListPemain), !.
+    sebelahKanan(Sekarang, Next, ListPemain), !.
 
+/* main ke kanan, pemain di urutan terakhir */
 tentukanSelanjutnya(kanan, _, ListPemain, Next) :-
-    ListPemain = [Next|_], !. 
+    ListPemain = [Next|_], !.
 
+/* main ke kiri, pemain masih di tengah urutan */
 tentukanSelanjutnya(kiri, Sekarang, ListPemain, Next) :-
-    append(_, [Next, Sekarang|_], ListPemain), !.
+    sebelahKiri(Sekarang, Next, ListPemain), !.
 
-tentukanSelanjutnya(kiri, Sekarang, ListPemain, Next) :-
-    ListPemain = [Sekarang|_], 
+/* main ke kiri, pemain di urutan pertama */
+tentukanSelanjutnya(kiri, _, ListPemain, Next) :-
+    cariTerakhir(ListPemain, Next), !.
+
+/* helper pengganti append */
+/* sebelahKanan: Next adalah elemen tepat setelah Sekarang */
+sebelahKanan(Sekarang, Next, [Sekarang, Next | _]).
+sebelahKanan(Sekarang, Next, [_ | Tail]) :- 
+    sebelahKanan(Sekarang, Next, Tail).
+
+/* sebelahKiri: Next adalah elemen tepat sebelum Sekarang */
+sebelahKiri(Sekarang, Next, [Next, Sekarang | _]).
+sebelahKiri(Sekarang, Next, [_ | Tail]) :- 
+    sebelahKiri(Sekarang, Next, Tail).
+
+/* cariTerakhir: mencari elemen paling ujung (terakhir) dari list */
+cariTerakhir([X], X).
+cariTerakhir([_ | Tail], Terakhir) :- 
+    cariTerakhir(Tail, Terakhir).
     last(ListPemain, Next), !.
