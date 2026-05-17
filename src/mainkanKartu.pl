@@ -1,3 +1,11 @@
+%bonus tantang------------------------------------------------
+mainkanKartu(_) :- %jika sedang di tantang tidak bisa mainkan kartu
+    statusAncaman(aktif),
+    write('Anda sedang terkena efek Wild Draw Four!'), nl,
+    write('Pilih perintah: "tantang." atau "ambilKartu."'), nl,
+    !, fail. 
+%------------------------------------------------------------
+
 mainkanKartu(NomorUrut) :-
     giliranSekarang(Pemain),
     kartuTangan(Pemain, Tangan),
@@ -14,7 +22,20 @@ mainkanKartu(NomorUrut) :-
     
     retract(kartuTeratas(_)),
     asserta(kartuTeratas(KartuPilihan)),
-    
+
+    %bonus tantang------------------------------------------------
+    warnaAktif(WarnaLama),
+    retractall(warnaSebelumnya(_)),
+    asserta(warnaSebelumnya(WarnaLama)),
+    retractall(pemainSebelumnya(_)),
+    asserta(pemainSebelumnya(Pemain)),
+
+    (Jenis==wildDrawFour -> retractall(statusAncaman(_)), asserta(statusAncaman(aktif))
+                            ;
+                            retractall(statusAncaman(_)), asserta(statusAncaman(aman))
+                            ),
+    %------------------------------------------------------------
+
     updateWarnaAktif(Warna),
     
     write('Berhasil memainkan: '), cetakKartu(KartuPilihan), nl,
@@ -90,3 +111,30 @@ sebelahKiri(Sekarang, Next, [_ | Tail]) :-
 cariTerakhir([X], X).
 cariTerakhir([_ | Tail], Terakhir) :- 
     cariTerakhir(Tail, Terakhir).
+
+%bonus tantang------------------------------------------------
+tantang :- 
+    statusAncaman(aktif), !, %ada yang tantang
+    giliranSekarang(Penantang),
+    pemainSebelumnya(Tertantang),
+    warnaSebelumnya(WarnaLama),
+    write('Tantangan dilakukan!'), nl,
+    write('Memeriksa kartu '), write(Tertantang), write('...'), nl,
+
+    kartuTangan(Tertantang, TanganTertantang), 
+    (member(kartu(WarnaLama, _), TanganTertantang) -> %cek apakah kartu di meja ada di tangan tertantang
+        %kartu di meja ada di tangan tertantang
+        write('Tantangan berhasil! '), write(Tertantang), write(' mendapatkan 4 kartu.'), nl,
+        ambilKartu(Tertantang, 4),
+        retractall(statusAncaman(_)), 
+        asserta(statusAncaman(aman))
+    ;   %kartu di meja tidak ada di tangan tertantang
+        format('Tantangan gagal. ~w mendapatkan 6 kartu acak. ~n', [Penantang]), 
+        ambilKartu(Penantang, 6),
+        retractall(statusAncaman(_)),
+        asserta(statusAncaman(aman)),
+        gantiGiliran
+    ).
+%tidak ada yang tantang
+tantang :- write ('Tidak ada kartu Wild Draw Four yang bisa ditantang saat ini.'), nl.
+%------------------------------------------------------------
