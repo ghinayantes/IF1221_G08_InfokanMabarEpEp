@@ -1,10 +1,8 @@
-%bonus tantang------------------------------------------------
-mainkanKartu(_) :- %jika sedang di tantang tidak bisa mainkan kartu
+mainkanKartu(_) :- %jika sedang ditantang tidak bisa mainkan kartu
     statusAncaman(aktif),
     write('Anda sedang terkena efek Wild Draw Four!'), nl,
     write('Pilih perintah: "tantang." atau "ambilKartu."'), nl,
     !, fail. 
-%------------------------------------------------------------
 
 mainkanKartu(NomorUrut) :-
     giliranSekarang(Pemain),
@@ -23,7 +21,7 @@ mainkanKartu(NomorUrut) :-
     retract(kartuTeratas(_)),
     asserta(kartuTeratas(KartuPilihan)),
 
-    %bonus tantang------------------------------------------------
+    % bonus tantang
     warnaAktif(WarnaLama),
     retractall(warnaSebelumnya(_)),
     asserta(warnaSebelumnya(WarnaLama)),
@@ -34,7 +32,6 @@ mainkanKartu(NomorUrut) :-
                             ;
                             retractall(statusAncaman(_)), asserta(statusAncaman(aman))
                             ),
-    %------------------------------------------------------------
 
     updateWarnaAktif(Warna),
     
@@ -112,7 +109,7 @@ cariTerakhir([X], X).
 cariTerakhir([_ | Tail], Terakhir) :- 
     cariTerakhir(Tail, Terakhir).
 
-%bonus tantang------------------------------------------------
+% bonus tantang
 tantang :- 
     statusAncaman(aktif), !, %ada yang tantang
     giliranSekarang(Penantang),
@@ -135,6 +132,5 @@ tantang :-
         asserta(statusAncaman(aman)),
         gantiGiliran
     ).
-%tidak ada yang tantang
-tantang :- write ('Tidak ada kartu Wild Draw Four yang bisa ditantang saat ini.'), nl.
-%------------------------------------------------------------
+% tidak ada yang tantang
+tantang :- write('Tidak ada kartu Wild Draw Four yang bisa ditantang saat ini.'), nl.
