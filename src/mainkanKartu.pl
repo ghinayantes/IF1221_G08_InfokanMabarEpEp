@@ -23,21 +23,26 @@ mainkanKartu(NomorUrut) :-
 
     % bonus tantang
     warnaAktif(WarnaLama),
+    kartuTeratas(kartu(_, JenisLama)), 
+    
     retractall(warnaSebelumnya(_)),
     asserta(warnaSebelumnya(WarnaLama)),
+    retractall(jenisSebelumnya(_)),    
+    asserta(jenisSebelumnya(JenisLama)), 
+    
     retractall(pemainSebelumnya(_)),
     asserta(pemainSebelumnya(Pemain)),
 
-    (Jenis==wildDrawFour -> retractall(statusAncaman(_)), asserta(statusAncaman(aktif))
+    (Jenis == wildDrawFour -> retractall(statusAncaman(_)), asserta(statusAncaman(aktif))
                             ;
                             retractall(statusAncaman(_)), asserta(statusAncaman(aman))
                             ),
 
     updateWarnaAktif(Warna),
-    
-    write('Berhasil memainkan: '), cetakKartu(KartuPilihan), nl,
+    format('~w memainkan kartu: ', [Pemain]), cetakKartu(KartuPilihan), write('.'), nl,
 
-    eksekusiEfek(Jenis).
+    (Jenis == wildDrawFour -> gantiGiliran, giliranSekarang(Next),
+        format('Giliran ~w.~n', [Next]) ; eksekusiEfek(Jenis)).
 
 mainkanKartu(_) :-
     write('Gagal memainkan. Nomor urut salah atau kartu tidak cocok dengan meja!'), nl.
@@ -54,7 +59,10 @@ cekValid(_, JenisPilihan) :-
     JenisPilihan == JenisTop.
 
 /* dilempar jika itu kartu hitam (wild/wild draw four) */
-cekValid(hitam, _).
+cekValid(hitam, _) :-
+    kartuTeratas(kartu(_, JenisTop)),
+    % Pastikan kartu teratas di meja bukan wild dan BUKAN wildDrawFour
+    \+ member(JenisTop, [wild, wildDrawFour]).
 
 /* helper update warna aktif */
 /* Jika kartu hitam, jangan ubah warna meja di sini */
@@ -74,8 +82,7 @@ gantiGiliran :-
     tentukanSelanjutnya(Arah, Sekarang, ListPemain, Next),
     
     retract(giliranSekarang(_)),
-    asserta(giliranSekarang(Next)),
-    write('Giliran pindah ke: '), write(Next), nl.
+    asserta(giliranSekarang(Next)).
     
 /* main ke kanan, pemain masih di tengah urutan */
 tentukanSelanjutnya(kanan, Sekarang, ListPemain, Next) :-
@@ -108,29 +115,3 @@ sebelahKiri(Sekarang, Next, [_ | Tail]) :-
 cariTerakhir([X], X).
 cariTerakhir([_ | Tail], Terakhir) :- 
     cariTerakhir(Tail, Terakhir).
-
-% bonus tantang
-tantang :- 
-    statusAncaman(aktif), !, %ada yang tantang
-    giliranSekarang(Penantang),
-    pemainSebelumnya(Tertantang),
-    warnaSebelumnya(WarnaLama),
-    write('Tantangan dilakukan!'), nl,
-    write('Memeriksa kartu '), write(Tertantang), write('...'), nl,
-
-    kartuTangan(Tertantang, TanganTertantang), 
-    (member(kartu(WarnaLama, _), TanganTertantang) -> %cek apakah kartu di meja ada di tangan tertantang
-        %kartu di meja ada di tangan tertantang
-        write('Tantangan berhasil! '), write(Tertantang), write(' mendapatkan 4 kartu.'), nl,
-        ambilKartu(Tertantang, 4),
-        retractall(statusAncaman(_)), 
-        asserta(statusAncaman(aman))
-    ;   %kartu di meja tidak ada di tangan tertantang
-        format('Tantangan gagal. ~w mendapatkan 6 kartu acak. ~n', [Penantang]), 
-        ambilKartu(Penantang, 6),
-        retractall(statusAncaman(_)),
-        asserta(statusAncaman(aman)),
-        gantiGiliran
-    ).
-% tidak ada yang tantang
-tantang :- write('Tidak ada kartu Wild Draw Four yang bisa ditantang saat ini.'), nl.

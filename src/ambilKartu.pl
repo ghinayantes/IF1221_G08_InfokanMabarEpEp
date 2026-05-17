@@ -1,13 +1,15 @@
-%bonus tantang------------------------------------------------
+% bonus tantang
 ambilKartu :- %pemain pilih ambilkartu, bukan tantang
     statusAncaman(aktif), !, 
     giliranSekarang(Pemain),
     write('Anda memilih tidak menantang.'), nl,
     ambilKartu(Pemain, 4),
+    format('~w mengambil 4 kartu dari deck.~n', [Pemain]),
     retractall(statusAncaman(_)),
     asserta(statusAncaman(aman)),
-    gantiGiliran.
-%------------------------------------------------------------
+    gantiGiliran,
+    giliranSekarang(Next),
+    format('Giliran ~w.~n', [Next]).
 
 ambilKartu :-
     giliranSekarang(Pemain),
@@ -23,7 +25,9 @@ ambilKartu :-
     asserta(kartuTangan(Pemain, TanganBaru)),
     
     write('Anda mengambil kartu: '), cetakKartu(KartuBaru), nl,
-    gantiGiliran.
+    gantiGiliran,
+    giliranSekarang(Next),
+    format('Giliran ~w.~n', [Next]).
 
 ambilKartu :-
     write('Gagal memainkan. Deck kosong!'), nl.
@@ -40,9 +44,8 @@ ambilKartu(Pemain, Jumlah) :-
     retract(sisaDeck(_)),
     asserta(sisaDeck(SisaDeckBaru)),
     retract(kartuTangan(Pemain, _)),
-    asserta(kartuTangan(Pemain, TanganBaru)),
+    asserta(kartuTangan(Pemain, TanganBaru)).
     
-    write(Pemain), write(' mengambil '), write(Jumlah), write(' kartu dari deck.'), nl.
 
 /* helper ambil N kartu dari deck */
 
