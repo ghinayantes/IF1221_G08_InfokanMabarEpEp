@@ -3,30 +3,31 @@ tangkap(Target) :-
     kartuTangan(Target, TanganTarget),
     hitungKartu(TanganTarget, JumlahTarget),
     
-    ((JumlahTarget =:= 1, \+ status_uni(Target)) ->
+    (JumlahTarget =:= 1, \+ statusUni(Target) -> 
     /* ketika tidak menyerukan uni (kasus pertama) */
-        write(Target), write(' tertangkap tidak menyerukan UNI.'), nl,
-        write(Target), write(' mendapatkan 2 kartu penalti.'), nl,
+        format('~w tertangkap tidak menyerukan UNI.~n', [Target]),
+        format('~w mendapatkan 2 kartu penalti.~n', [Target]),
         
-        hukumAmbilKartu(Target, 2),
+        ambilKartu(Target, 2),
         gantiGiliran
     ;
         /* kasus kedua kalo tuduhan salah (kartu > 1 atau sudah teriak uni) */
-        write('Tuduhan salah! Target tidak melanggar aturan.'), nl.
-        write(Penangkap), write(' mendapatkan 1 kartu penalti secara acak.'), nl,
+        write('Tuduhan salah! Target tidak melanggar aturan.'), nl, % <-- Ganti titik jadi koma
+        format('~w mendapatkan 1 kartu penalti secara acak.~n', [Penangkap]),
         
-        hukumAmbilKartu(Penangkap, 1),
+        ambilKartu(Penangkap, 1),
         gantiGiliran
-    ).
+    ). 
 
 /* helper menggantikan length untuk menghitung isi list */
 hitungKartu([], 0).
+
 hitungKartu([_ | Tail], Jumlah) :-
     hitungKartu(Tail, Sisa),
     Jumlah is Sisa + 1.
 
 /* helper status aman uni */
 tandaiAman(Pemain) :-
-    status_uni(Pemain), !.
+    statusUni(Pemain), !.
 tandaiAman(Pemain) :-
-    assertz(status_uni(Pemain)).
+    assertz(statusUni(Pemain)).

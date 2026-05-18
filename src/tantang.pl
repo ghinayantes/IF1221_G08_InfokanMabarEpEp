@@ -10,7 +10,7 @@ tantang :-
 
     kartuTangan(Tertantang, TanganTertantang),
     
-    % Cek apakah Tertantang punya kartu lain yang sewarna ATAU sejenis/seangka dengan meja sebelumnya
+    % Cek apakah Tertantang punya kartu lain yang sewarna atau sejenis/seangka dengan meja sebelumnya
     ( (member(kartu(WarnaLama, _), TanganTertantang) ; member(kartu(_, JenisTop), TanganTertantang)) -> 
         % jika punya tantangan terhasil, yg tertantang kena hukuman ambil 4 kartu
         format('Tantangan berhasil! ~w secara ilegal memainkan Wild Draw Four.~n', [Tertantang]),
@@ -32,7 +32,6 @@ tantang :-
         giliranSekarang(Next),
         format('Giliran ~w.~n', [Next])
     ).
-
-% Jika tidak sedang diancam Wild Draw Four
+% else
 tantang :- 
     write('Tidak ada kartu Wild Draw Four yang bisa ditantang saat ini.'), nl.

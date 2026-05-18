@@ -1,9 +1,9 @@
 /* helper pengganti nth1 */
-ambilKartu(1, [Kartu|_], Kartu).
-ambilKartu(N, [_|SisaTangan], Kartu) :-
+ambilKartuAtIndeks(1, [Kartu|_], Kartu).
+ambilKartuAtIndeks(N, [_|SisaTangan], Kartu) :-
     N > 1,
     N1 is N - 1,
-    ambilKartu(N1, SisaTangan, Kartu).
+    ambilKartuAtIndeks(N1, SisaTangan, Kartu).
 
 uni(NomorUrut) :-
     giliranSekarang(Pemain),
@@ -11,13 +11,15 @@ uni(NomorUrut) :-
     hitungKartu(Tangan, JumlahKartu),
 
     (JumlahKartu =:= 2 ->
-        /* kartu di tangan ada 2, dimainkan 1 jadi sisa 1 */
-        ambilKartu(NomorUrut, Tangan, KartuPilihan),
+        ambilKartuAtIndeks(NomorUrut, Tangan, KartuPilihan),
         KartuPilihan = kartu(Warna, Jenis),
         
         cekValid(Warna, Jenis),
         !,
         
+        warnaAktif(WarnaLama),
+        kartuTeratas(kartu(_, JenisLama)),
+
         select(KartuPilihan, Tangan, SisaTangan),
         retract(kartuTangan(Pemain, _)),
         assertz(kartuTangan(Pemain, SisaTangan)), 
@@ -26,20 +28,39 @@ uni(NomorUrut) :-
         assertz(kartuTeratas(KartuPilihan)), 
         updateWarnaAktif(Warna), 
         
-        write(Pemain), write(' memainkan kartu: '), write(Warna), write('-'), write(Jenis), nl,
-        write(Pemain), write(' menyerukan UNI!'), nl,
-        
-        /* tandai pemain ini aman dari tangkapan */
-        tandaiAman(Pemain),
-        
-        eksekusiEfek(Jenis),
-        gantiGiliran
+        (SisaTangan == [] ->
+            nl, endGame, !
+        ;
+            % 1. Kondisi ancaman khusus Wild Draw Four
+            (Jenis == wildDrawFour -> 
+                retractall(statusAncaman(_)), asserta(statusAncaman(aktif)) ; 
+                retractall(statusAncaman(_)), asserta(statusAncaman(aman))),
+
+            retractall(warnaSebelumnya(_)), asserta(warnaSebelumnya(WarnaLama)),
+            retractall(jenisSebelumnya(_)), asserta(jenisSebelumnya(JenisLama)),
+            retractall(pemainSebelumnya(_)), asserta(pemainSebelumnya(Pemain)),
+
+            updateWarnaAktif(Warna),
+
+            format('~w memainkan kartu: ', [Pemain]), cetakKartu(KartuPilihan), write('.'), nl,
+            format('~w menyerukan UNI!~n', [Pemain]),
+            tandaiAman(Pemain),
+
+            % Interupsi giliran khusus Wild Draw Four
+            (Jenis == wildDrawFour -> 
+                gantiGiliran, 
+                giliranSekarang(Next),
+                format('Giliran ~w.~n', [Next]) 
+            ; 
+                eksekusiEfek(Jenis)
+            )
+        )
     ;
         /* kartu di tangan bukan 2 (sisa tidak akan 1) */
         write('Perintah tidak valid! Kartu tidak membuat sisa tangan menjadi 1.'), nl,
-        write(Pemain), write(' mendapatkan 1 kartu penalti acak.'), nl,
+        format('~w mendapatkan 1 kartu penalti acak.~n', [Pemain]),
      
-        hukumAmbilKartu(Pemain, 1), 
+        ambilKartu(Pemain, 1),
         gantiGiliran
     ).
 

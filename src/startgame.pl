@@ -11,6 +11,8 @@
 :- dynamic(warnaSebelumnya/1).
 :- dynamic(statusAncaman/1).
 :- dynamic(jenisSebelumnya/1).
+% bonus sembunyikan kartu
+:- dynamic(kartuTerhidden/2).
 
 :- include('kartu.pl').
 :- include('pemain.pl').
@@ -21,6 +23,10 @@
 :- include('mainkanKartu.pl').
 :- include('cekInfo.pl').
 :- include('tantang.pl').
+:- include('tangkap.pl').
+:- include('uni.pl').
+:- include('endGame.pl').
+:- include('sembunyiKartu.pl').
 
 startGame :-
     write('Masukkan jumlah pemain: '),
@@ -67,8 +73,9 @@ hapusDataLama :-
     retractall(pemainSebelumnya(_)),
     retractall(warnaSebelumnya(_)),
     retractall(statusAncaman(_)),
-    retractall(jenisSebelumnya(_)).
-
+    retractall(jenisSebelumnya(_)),
+    % bonus sembunyikan kartu
+    retractall(kartuTerhidden(_, _)).
 /* 
 Daftar Query yang dapat digunakan:
 

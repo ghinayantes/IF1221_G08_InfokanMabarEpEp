@@ -1,4 +1,5 @@
-mainkanKartu(_) :- %jika sedang ditantang tidak bisa mainkan kartu
+%jika sedang ditantang tidak bisa mainkan kartu
+mainkanKartu(_) :- 
     statusAncaman(aktif),
     write('Anda sedang terkena efek Wild Draw Four!'), nl,
     write('Pilih perintah: "tantang." atau "ambilKartu."'), nl,
@@ -21,28 +22,31 @@ mainkanKartu(NomorUrut) :-
     retract(kartuTeratas(_)),
     asserta(kartuTeratas(KartuPilihan)),
 
-    % bonus tantang
-    warnaAktif(WarnaLama),
-    kartuTeratas(kartu(_, JenisLama)), 
-    
-    retractall(warnaSebelumnya(_)),
-    asserta(warnaSebelumnya(WarnaLama)),
-    retractall(jenisSebelumnya(_)),    
-    asserta(jenisSebelumnya(JenisLama)), 
-    
-    retractall(pemainSebelumnya(_)),
-    asserta(pemainSebelumnya(Pemain)),
+    % pengecekan kondisi apakah ada pemain yg sdh menghabiskan kartunya
+    (SisaTangan == [] ->
+        nl, endGame, ! 
+    ;
+        % jika tidak ada, lanjutkan alur permainan seperti biasa
+        warnaAktif(WarnaLama),
+        kartuTeratas(kartu(_, JenisLama)), 
+        
+        retractall(warnaSebelumnya(_)),
+        asserta(warnaSebelumnya(WarnaLama)),
+        retractall(jenisSebelumnya(_)),    
+        asserta(jenisSebelumnya(JenisLama)), 
+        
+        retractall(pemainSebelumnya(_)),
+        asserta(pemainSebelumnya(Pemain)),
 
-    (Jenis == wildDrawFour -> retractall(statusAncaman(_)), asserta(statusAncaman(aktif))
-                            ;
-                            retractall(statusAncaman(_)), asserta(statusAncaman(aman))
-                            ),
+        (Jenis == wildDrawFour -> retractall(statusAncaman(_)), 
+        asserta(statusAncaman(aktif)) ; retractall(statusAncaman(_)), asserta(statusAncaman(aman))),
 
-    updateWarnaAktif(Warna),
-    format('~w memainkan kartu: ', [Pemain]), cetakKartu(KartuPilihan), write('.'), nl,
+        updateWarnaAktif(Warna),
+        format('~w memainkan kartu: ', [Pemain]), cetakKartu(KartuPilihan), write('.'), nl,
 
-    (Jenis == wildDrawFour -> gantiGiliran, giliranSekarang(Next),
-        format('Giliran ~w.~n', [Next]) ; eksekusiEfek(Jenis)).
+        (Jenis == wildDrawFour -> gantiGiliran, giliranSekarang(Next),
+            format('Giliran ~w.~n', [Next]) ; eksekusiEfek(Jenis))
+    ).
 
 mainkanKartu(_) :-
     write('Gagal memainkan. Nomor urut salah atau kartu tidak cocok dengan meja!'), nl.
@@ -115,4 +119,3 @@ sebelahKiri(Sekarang, Next, [_ | Tail]) :-
 cariTerakhir([X], X).
 cariTerakhir([_ | Tail], Terakhir) :- 
     cariTerakhir(Tail, Terakhir).
-    last(ListPemain, Next), !.
