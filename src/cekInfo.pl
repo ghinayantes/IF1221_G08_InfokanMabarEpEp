@@ -8,6 +8,18 @@ cekInfo:-
     nl,
     tampilkanDetailPemain(L, 1).
 
+%update perhitungan jumlah kartu saat disembunyikan
+hitungKartuTersembunyi(_, [], 0).
+
+hitungKartuTersembunyi(Pemain, [H|T], Jumlah) :-
+    kartuTersembunyi(Pemain, H),
+    hitungKartuTersembunyi(Pemain, T, Temp),
+    Jumlah is Temp + 1.
+
+hitungKartuTersembunyi(Pemain, [H|T], Jumlah) :-
+    \+ kartuTersembunyi(Pemain, H),
+    hitungKartuTersembunyi(Pemain, T, Jumlah).
+
 % base case
 tampilkanDetailPemain([], _).
 
