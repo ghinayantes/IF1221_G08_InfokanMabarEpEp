@@ -16,3 +16,20 @@ sembunyikanKartu(NomorUrut) :-
     gantiGiliran,
     giliranSekarang(Next),
     format('Giliran ~w.~n', [Next]).
+
+tampilkanKartu :-
+    giliranSekarang(Pemain),
+    write('Kartu tersembunyi:'), nl,
+    tampilkanDaftarKartuTersembunyi(Pemain).
+
+%Base case
+tampilkanDaftarKartuTersembunyi(Pemain) :-
+    \+ kartuTersembunyi(Pemain, _),
+    write('Tidak ada kartu tersembunyi.'), nl.
+
+%rekursif
+tampilkanDaftarKartuTersembunyi(Pemain) :-
+    kartuTersembunyi(Pemain, Kartu),
+    cetakKartu(Kartu), nl,
+    fail.
+tampilkanDaftarKartuTersembunyi(_).
