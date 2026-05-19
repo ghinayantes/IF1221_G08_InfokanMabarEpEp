@@ -1,11 +1,8 @@
 cekInfo:-
     kartuTeratas(KT),
-    urutanPemain(L),
-    nl, % Baris kosong setelah command dipanggil
-    write('Kartu discard top: '), cetakKartu(KT), write('.'), nl,
-    nl, % Baris kosong
-    write('Urutan pemain: '), tampilkanUrutan(L), write('.'), nl,
-    nl, % Baris kosong sebelum list pemain
+    urutanPemain(L), nl, 
+    write('Kartu discard top: '), cetakKartu(KT), write('.'), nl, nl,
+    write('Urutan pemain: '), tampilkanUrutan(L), write('.'), nl, nl,
     tampilkanDetailPemain(L, 1).
 
 %Menghitung kartu tersembunyi 
