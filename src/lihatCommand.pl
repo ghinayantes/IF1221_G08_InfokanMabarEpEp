@@ -12,6 +12,7 @@ commandNormal :-
     write('1. mainkanKartu(NomorUrut)'), nl,
     write('2. ambilKartu'), nl,
     write('3. uni'), nl,
+    write('4. sembunyikanKartu(NomorUrut)'), nl,
     tampilkanAksiPendukung.
 
 tampilkanAksiPendukung :-
