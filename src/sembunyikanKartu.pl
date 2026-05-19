@@ -13,4 +13,6 @@ sembunyikanKartu(NomorUrut) :-
     write(' berhasil disembunyikan.'),
     nl, nl,
 
-    format('Giliran ~w.~n', [Pemain]).
+    gantiGiliran,
+    giliranSekarang(Next),
+    format('Giliran ~w.~n', [Next]).
