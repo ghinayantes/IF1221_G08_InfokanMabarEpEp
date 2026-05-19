@@ -44,8 +44,7 @@ mainkanKartu(NomorUrut) :-
         updateWarnaAktif(Warna),
         format('~w memainkan kartu: ', [Pemain]), cetakKartu(KartuPilihan), write('.'), nl,
 
-        (Jenis == wildDrawFour -> gantiGiliran, giliranSekarang(Next),
-            format('Giliran ~w.~n', [Next]) ; eksekusiEfek(Jenis))
+        eksekusiEfek(Jenis)
     ).
 
 mainkanKartu(_) :-
@@ -66,7 +65,7 @@ cekValid(_, JenisPilihan) :-
 cekValid(hitam, _) :-
     kartuTeratas(kartu(_, JenisTop)),
     % Pastikan kartu teratas di meja bukan wild dan BUKAN wildDrawFour
-    \+ member(JenisTop, [wild, wildDrawFour]).
+    \+ isMember(JenisTop, [wild, wildDrawFour]).
 
 /* helper update warna aktif */
 /* Jika kartu hitam, jangan ubah warna meja di sini */
