@@ -120,7 +120,6 @@ pemainMenang(Pemain) :-
     kartuTangan(Pemain, []).
 
 /* Tampilkan detail poin tiap pemain */
-/* Format: nama: kartu1 + kartu2 = nilai1 + nilai2 = total poin */
 tampilkanPoinPemain([]).
 tampilkanPoinPemain([P|Sisa]) :-
     format('~w: ', [P]),

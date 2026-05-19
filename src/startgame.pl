@@ -26,7 +26,7 @@
 :- include('tangkap.pl').
 :- include('uni.pl').
 :- include('endGame.pl').
-:- include('sembunyiKartu.pl').
+:- include('sembunyikanKartu.pl').
 
 startGame :-
     write('Masukkan jumlah pemain: '),
