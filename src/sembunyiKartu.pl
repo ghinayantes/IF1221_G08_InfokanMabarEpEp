@@ -1,20 +1,3 @@
-%hitungPanjang(List, Hasil)
-
-hitungPanjang([], 0).
-
-hitungPanjang([_|T], Hasil) :-
-    hitungPanjang(T, Temp),
-    Hasil is Temp + 1.
-
-%ambilKartu(List, Index, Kartu)
-
-ambilKartu([H|_], 1, H).
-
-ambilKartu([_|T], Index, Kartu) :-
-    Index > 1,
-    NextIndex is Index - 1,
-    ambilKartu(T, NextIndex, Kartu).
-
 %sembunyikanKartu(NomorUrut)
 
 sembunyikanKartu(NomorUrut) :-
@@ -32,7 +15,16 @@ sembunyikanKartu(NomorUrut) :-
     write(' berhasil disembunyikan.'),
     nl, nl,
 
-    write('Giliran '),
-    write(Pemain),
-    write('.'),
+    gantiGiliran,
+    giliranSekarang(Next),
+    format('Giliran ~w.~n', [Next]).
+
+tampilkanKartu(Kartu) :-
+    giliranSekarang(Pemain),
+    kartuTersembunyi(Pemain, Kartu),
+    retract(kartuTersembunyi(Pemain, Kartu)),
+
+    write('Kartu '),
+    cetakKartu(Kartu),
+    write(' berhasil ditampilkan kembali.'),
     nl.
