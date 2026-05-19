@@ -12,7 +12,15 @@ commandNormal :-
     write('1. mainkanKartu(NomorUrut)'), nl,
     write('2. ambilKartu'), nl,
     write('3. uni'), nl,
+    tampilkanCommandTersembuyi.
     tampilkanAksiPendukung.
+
+%menambahkan aksi menampilkan kartu yang sebelumnya disembunyikan 
+tampilkanCommandTersembunyi :-
+    giliranSekarang(Pemain),
+    kartuTersembunyi(Pemain, _),
+    write('5. tampilkanKartu(Kartu)'), nl.
+tampilkanCommandTersembunyi.
 
 tampilkanAksiPendukung :-
     write('Aksi pendukung yang tersedia:'), nl,
