@@ -142,7 +142,20 @@ efekWild(wild) :-
     ).
 
 efekWildrawFour(wildDrawFour) :-
-    pemainSelanjutnya(Target),
-    ambilKartu(Target, 4),
-    skipPemain(Target),
-    write('Pemain selanjutnya ambil 4 kartu dan warna berubah'), nl.
+    write('Pilih warna baru untuk Wild Draw Four: (merah, kuning, hijau, biru).'), nl,
+    read(WarnaBaru),
+    (isMember(WarnaBaru, [merah, kuning, hijau, biru]) ->
+        retract(warnaAktif(_)),
+        asserta(warnaAktif(WarnaBaru)),
+        format('Warna berhasil diubah menjadi ~w.~n', [WarnaBaru]),
+        
+        write('Pemain selanjutnya harus mengambil 4 kartu atau tantang.'), nl,
+        
+        gantiGiliran,
+        giliranSekarang(Next),
+        format('Giliran ~w.~n', [Next])
+    ;
+        % Jika input warna salah 
+        write('Warna tidak valid! Pilih kembali.'), nl,
+        efekWildrawFour(wildDrawFour)
+    ).
