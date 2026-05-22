@@ -64,6 +64,7 @@ kartu(hijau, drawTwo).
 kartu(biru, drawTwo).
 kartu(hitam, wild).
 kartu(hitam, wildDrawFour).
+kartu(hitam, mimic).
 
 /* Efek Kartu */
 eksekusiEfek(skip) :- efekSkip(skip).
@@ -72,10 +73,12 @@ eksekusiEfek(drawTwo) :- efekDrawtwo(drawTwo).
 eksekusiEfek(wild) :- efekWild(wild).
 eksekusiEfek(wildDrawFour) :- efekWildrawFour(wildDrawFour).
 eksekusiEfek(angka(_)) :- write('Tidak ada efek spesial.'), nl.
+eksekusiEfek(mimic) :- efekMimic(mimic).
 
 /* Syarat Dasar Permainan */
 lempar(kartu(Warna, _), kartu(Warna, _)).
 lempar(kartu(_, Jenis), kartu(_, Jenis)).
+lempar(kartu(hitam, mimic), _).
 
 /* Syarat Kartu Wild */
 lempar(kartu(hitam, wild), _).
@@ -87,6 +90,7 @@ cekKesamaan(kartu(_, J), _, J).
 cekKesamaan(kartu(_, angka(N)), _, angka(N)).
 cekKesamaan(kartu(hitam, wild), _, _).
 cekKesamaan(kartu(hitam, wildDrawFour), _, _).
+cekKesamaan(kartu(hitam, mimic), _, _).
 
 /* Eksekusi Efek Kartu */
 efekSkip(skip) :-
