@@ -13,6 +13,7 @@ commandNormal :-
     write('2. ambilKartu'), nl,
     write('3. uni(NomorUrut)'), nl,
     write('4. sembunyikanKartu(NomorUrut)'), nl,
+    write('5. godsHand.'), nl,
     tampilkanCommandTampilkan,
     tampilkanAksiPendukung.
 
@@ -20,7 +21,7 @@ commandNormal :-
 tampilkanCommandTampilkan :-
     giliranSekarang(Pemain),
     kartuTersembunyi(Pemain, _), !,
-    write('5. tampilkanKartu'), nl.
+    write('6. tampilkanKartu'), nl.
 
 tampilkanCommandTampilkan.
 
