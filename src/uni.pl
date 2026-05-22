@@ -22,8 +22,11 @@ uni(NomorUrut) :-
 
         select(KartuPilihan, Tangan, SisaTangan),
         retract(kartuTangan(Pemain, _)),
-        assertz(kartuTangan(Pemain, SisaTangan)), 
-        
+        assertz(kartuTangan(Pemain, SisaTangan)),
+
+        % Hapus indeks tersembunyi untuk kartu yang dimainkan, geser indeks lebih besar
+        updateIndeksTersembunyi(Pemain, NomorUrut),
+
         retract(kartuTeratas(_)),
         assertz(kartuTeratas(KartuPilihan)), 
         updateWarnaAktif(Warna), 

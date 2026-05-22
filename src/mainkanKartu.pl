@@ -18,7 +18,10 @@ mainkanKartu(NomorUrut) :-
     select(KartuPilihan, Tangan, SisaTangan),
     retract(kartuTangan(Pemain, _)),
     asserta(kartuTangan(Pemain, SisaTangan)),
-    
+
+    % Hapus indeks tersembunyi untuk kartu yang dimainkan, lalu geser indeks lebih besar
+    updateIndeksTersembunyi(Pemain, NomorUrut),
+
     retract(kartuTeratas(_)),
     asserta(kartuTeratas(KartuPilihan)),
 
@@ -118,3 +121,24 @@ sebelahKiri(Sekarang, Next, [_ | Tail]) :-
 cariTerakhir([X], X).
 cariTerakhir([_ | Tail], Terakhir) :- 
     cariTerakhir(Tail, Terakhir).
+/* updateIndeksTersembunyi: hapus indeks yang dimainkan, geser indeks lebih besar ke bawah 1 */
+updateIndeksTersembunyi(Pemain, IndeksDimainkan) :-
+    % Kumpulkan semua indeks tersembunyi milik pemain ini
+    findall(I, kartuTersembunyi(Pemain, I), SemuaIndeks),
+    retractall(kartuTersembunyi(Pemain, _)),
+    assertIndeksBaru(Pemain, SemuaIndeks, IndeksDimainkan).
+
+assertIndeksBaru(_, [], _).
+assertIndeksBaru(Pemain, [I|T], Dimainkan) :-
+    (I =:= Dimainkan ->
+        % Indeks ini adalah kartu yang dimainkan, buang saja
+        true
+    ; I > Dimainkan ->
+        % Geser turun 1
+        IBaru is I - 1,
+        asserta(kartuTersembunyi(Pemain, IBaru))
+    ;
+        % Indeks lebih kecil, tetap sama
+        asserta(kartuTersembunyi(Pemain, I))
+    ),
+    assertIndeksBaru(Pemain, T, Dimainkan).

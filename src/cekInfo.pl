@@ -8,17 +8,22 @@ cekInfo:-
     nl,
     tampilkanDetailPemain(L, 1).
 
-%update perhitungan jumlah kartu saat disembunyikan
-hitungKartuTersembunyi(_, [], 0).
+% Hitung jumlah kartu yang tersembunyi berdasarkan indeks
+hitungKartuTersembunyi(Pemain, ListK, Jumlah) :-
+    hitungPanjang(ListK, Total),
+    hitungIndeksTersembunyi(Pemain, 1, Total, Jumlah).
 
-hitungKartuTersembunyi(Pemain, [H|T], Jumlah) :-
-    kartuTersembunyi(Pemain, H),
-    hitungKartuTersembunyi(Pemain, T, Temp),
-    Jumlah is Temp + 1.
-
-hitungKartuTersembunyi(Pemain, [H|T], Jumlah) :-
-    \+ kartuTersembunyi(Pemain, H),
-    hitungKartuTersembunyi(Pemain, T, Jumlah).
+hitungIndeksTersembunyi(_, Idx, Total, 0) :-
+    Idx > Total, !.
+hitungIndeksTersembunyi(Pemain, Idx, Total, Jumlah) :-
+    Idx =< Total,
+    IdxNext is Idx + 1,
+    (kartuTersembunyi(Pemain, Idx) ->
+        hitungIndeksTersembunyi(Pemain, IdxNext, Total, Temp),
+        Jumlah is Temp + 1
+    ;
+        hitungIndeksTersembunyi(Pemain, IdxNext, Total, Jumlah)
+    ).
 
 % base case
 tampilkanDetailPemain([], _).
@@ -26,7 +31,9 @@ tampilkanDetailPemain([], _).
 % Rekursi list pemain
 tampilkanDetailPemain([H|T], No) :-
     kartuTangan(H, ListK),
-    hitungPanjang(ListK, Jumlah),
+    hitungPanjang(ListK, Total),
+    hitungKartuTersembunyi(H, ListK, JumlahTersembunyi),
+    Jumlah is Total - JumlahTersembunyi,
     format('Nama pemain ~w: ~w~n', [No, H]),
     format('Jumlah kartu : ~w~n~n', [Jumlah]), 
     NextNo is No + 1,

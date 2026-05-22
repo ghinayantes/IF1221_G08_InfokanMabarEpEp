@@ -12,7 +12,7 @@
 :- dynamic(statusAncaman/1).
 :- dynamic(jenisSebelumnya/1).
 % bonus sembunyikan kartu
-:- dynamic(kartuTerhidden/2).
+:- dynamic(kartuTersembunyi/2).
 
 :- include('kartu.pl').
 :- include('pemain.pl').
@@ -75,7 +75,7 @@ hapusDataLama :-
     retractall(statusAncaman(_)),
     retractall(jenisSebelumnya(_)),
     % bonus sembunyikan kartu
-    retractall(kartuTerhidden(_, _)).
+    retractall(kartuTersembunyi(_, _)).
 /* 
 Daftar Query yang dapat digunakan:
 
