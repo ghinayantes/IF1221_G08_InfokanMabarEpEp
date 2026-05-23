@@ -46,11 +46,14 @@ mainkanKartu(NomorUrut) :-
 
         updateWarnaAktif(Warna),
         format('~w memainkan kartu: ', [Pemain]), cetakKartu(KartuPilihan), write('.'), nl,
+
+        %bonus mimic card
         (   (Jenis = skip ; Jenis = reverse ; Jenis = drawTwo ; Jenis = wild ; Jenis = wildDrawFour) ->
             updateAksiTerakhir(KartuPilihan)
         ;   
-            true %kalo jenis kartu adalah angka, lewati rules catat kartu aksi
+            true % Jika kartu angka biasa, lewati saja tanpa mencatat aksi
         ),
+        
         eksekusiEfek(Jenis)
     ).
 
