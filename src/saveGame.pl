@@ -34,7 +34,7 @@ saveGame :-
     SemuaKartuTersembunyi(UP),
 
     %bonus mimic card
-    (kartu_aksi_terakhir(KartuAksi, PemainLama, GiliranLama) ->
+    (kartuAksiTerakhir(KartuAksi, PemainLama, GiliranLama) ->
         format('kartu_aksi_terakhir(~w, ~q, ~w).~n', [KartuAksi, PemainLama, GiliranLama])
     ;   
         format('kartu_aksi_terakhir:tidak ada kartu aksi yang dimainkan.~n', [])
