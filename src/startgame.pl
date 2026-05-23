@@ -6,6 +6,13 @@
 :- dynamic(arahPermainan/1).
 :- dynamic(statusUni/1).
 :- dynamic(sisaDeck/1).
+%bonus tantang
+:- dynamic(pemainSebelumnya/1).
+:- dynamic(warnaSebelumnya/1).
+:- dynamic(statusAncaman/1).
+:- dynamic(jenisSebelumnya/1).
+% bonus sembunyikan kartu
+:- dynamic(kartuTersembunyi/2).
 
 :- include('kartu.pl').
 :- include('pemain.pl').
@@ -14,38 +21,45 @@
 :- include('lihatCommand.pl').
 :- include('ambilKartu.pl').
 :- include('mainkanKartu.pl').
+:- include('cekInfo.pl').
+:- include('tantang.pl').
+:- include('tangkap.pl').
+:- include('uni.pl').
+:- include('endGame.pl').
+:- include('sembunyikanKartu.pl').
+:- include('godsHand.pl').
 
 startGame :-
     write('Masukkan jumlah pemain: '),
     read(N),
-    prosesInputPemain(N).
+    (N >= 2, N =< 4 -> nl, inputNamaPemain(N, [], DaftarNama),
+    inisialisasiGame(DaftarNama) ; write('Mohon masukkan angka antara 2 - 4.'), nl, startGame).
 
 inisialisasiGame(DaftarNama) :-
     hapusDataLama,
     acakList(DaftarNama, UrutanBaru),
     buatDeckBaru(DeckLengkap),
     bagiKartuPemain(UrutanBaru, DeckLengkap, DeckSisa),
-    setKartuAwal(DeckSisa, KartuAwal, DeckFinal),
+
+    (setKartuAwal(DeckSisa, KartuAwal, DeckFinal) -> true ; 
+        write('Gagal menetapkan kartu awal!'), nl, fail),
     
     assertz(urutanPemain(UrutanBaru)),
-    UrutanBaru = [Pertama|_],
-    assertz(giliranSekarang(Pertama)),
+    UrutanBaru = [P1|_], 
+    assertz(giliranSekarang(P1)),
     assertz(kartuTeratas(KartuAwal)),
-    KartuAwal = kartu(W, _), assertz(warnaAktif(W)),
+    
+    KartuAwal = kartu(W, _), 
+    assertz(warnaAktif(W)),
+    
     assertz(arahPermainan(kanan)),
     assertz(statusUni([])),
-    assertz(sisaDeck(DeckFinal)),
-    
-    nl,
-    format('Urutan pemain: ', []),
-    tampilkanUrutan(UrutanBaru),
-    write('.'), nl, nl,
-    format('Setiap pemain mendapatkan 7 kartu acak.', []), nl, nl,
-    format('Kartu discard top: ', []),
-    cetakKartu(KartuAwal),
-    nl, nl,
-    format('Giliran ~w.~n', [Pertama]),
-    !.
+    assertz(sisaDeck(DeckFinal)), nl,
+
+    write('Urutan pemain: '), tampilkanUrutan(UrutanBaru), write('.'), nl, nl,
+    write('Setiap pemain mendapatkan 7 kartu acak.'), nl, nl,
+    write('Kartu discard top: '), cetakKartu(KartuAwal), nl, nl,
+    format('Giliran ~w.~n', [P1]), !.
 
 hapusDataLama :-
     retractall(urutanPemain(_)),
@@ -55,8 +69,14 @@ hapusDataLama :-
     retractall(warnaAktif(_)),
     retractall(arahPermainan(_)),
     retractall(statusUni(_)),
-    retractall(sisaDeck(_)).
-
+    retractall(sisaDeck(_)),
+    % bonus tantang
+    retractall(pemainSebelumnya(_)),
+    retractall(warnaSebelumnya(_)),
+    retractall(statusAncaman(_)),
+    retractall(jenisSebelumnya(_)),
+    % bonus sembunyikan kartu
+    retractall(kartuTersembunyi(_, _)).
 /* 
 Daftar Query yang dapat digunakan:
 
