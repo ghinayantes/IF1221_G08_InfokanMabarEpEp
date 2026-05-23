@@ -10,7 +10,10 @@
 :- dynamic(pemainSebelumnya/1).
 :- dynamic(warnaSebelumnya/1).
 :- dynamic(statusAncaman/1).
-%bonus mimic
+:- dynamic(jenisSebelumnya/1).
+% bonus sembunyikan kartu
+:- dynamic(kartuTersembunyi/2).
+%bonus mimic card
 :- dynamic(kartuAksiTerakhir/3).
 
 :- include('kartu.pl').
@@ -21,6 +24,12 @@
 :- include('ambilKartu.pl').
 :- include('mainkanKartu.pl').
 :- include('cekInfo.pl').
+:- include('tantang.pl').
+:- include('tangkap.pl').
+:- include('uni.pl').
+:- include('endGame.pl').
+:- include('sembunyikanKartu.pl').
+:- include('godsHand.pl').
 
 startGame :-
     write('Masukkan jumlah pemain: '),
@@ -63,10 +72,13 @@ hapusDataLama :-
     retractall(arahPermainan(_)),
     retractall(statusUni(_)),
     retractall(sisaDeck(_)),
-    %bonus tantang
+    % bonus tantang
     retractall(pemainSebelumnya(_)),
     retractall(warnaSebelumnya(_)),
-    retractall(statusAncaman(_)).
+    retractall(statusAncaman(_)),
+    retractall(jenisSebelumnya(_)),
+    % bonus sembunyikan kartu
+    retractall(kartuTersembunyi(_, _)).
 
 %bonus mimic card
 updateAksiTerakhir(kartu(Warna, Jenis)) :-
