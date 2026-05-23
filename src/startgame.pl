@@ -10,6 +10,8 @@
 :- dynamic(pemainSebelumnya/1).
 :- dynamic(warnaSebelumnya/1).
 :- dynamic(statusAncaman/1).
+%bonus mimic
+:- dynamic(kartuAksiTerakhir/3).
 
 :- include('kartu.pl').
 :- include('pemain.pl').
@@ -66,6 +68,17 @@ hapusDataLama :-
     retractall(warnaSebelumnya(_)),
     retractall(statusAncaman(_)).
 
+%bonus mimic card
+updateAksiTerakhir(kartu(Warna, Jenis)) :-
+    giliranKe(N), !, 
+    giliranSekarang(Pemain),
+    retractall(kartuAksiTerakhir(_, _, _)),
+    assertz(kartuAksiTerakhir(kartu(Warna, Jenis), Pemain, N)).
+
+updateAksiTerakhir(kartu(Warna, Jenis)) :-
+    giliranSekarang(Pemain),
+    retractall(kartuAksiTerakhir(_, _, _)),
+    assertz(kartuAksiTerakhir(kartu(Warna, Jenis), Pemain, 0)).
 /* 
 Daftar Query yang dapat digunakan:
 
