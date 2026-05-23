@@ -37,6 +37,13 @@ mainkanKartu(NomorUrut) :-
     
     write('Berhasil memainkan: '), cetakKartu(KartuPilihan), nl,
 
+    %bonus mimic card
+    (   (Jenis = skip ; Jenis = reverse ; Jenis = drawTwo ; Jenis = wild ; Jenis = wildDrawFour) ->
+        updateAksiTerakhir(KartuPilihan)
+    ;   
+        true %kalo jenis kartu adalah angka, lewati 
+    ),
+
     eksekusiEfek(Jenis).
 
 mainkanKartu(_) :-
