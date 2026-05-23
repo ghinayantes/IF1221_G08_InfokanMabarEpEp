@@ -11,7 +11,10 @@ loadGame :-
     ).
 
 prosesLoadData(NamaFile) :-
-    bersihkanStateLama,
+    hapusDataLama,
+    
+    retractall(kartuTerhidden(_, _)),
+    retractall(kartu_aksi_terakhir(_, _, _)),
     
     open(NamaFile, read, Stream),
     bacaIsiFile(Stream),
@@ -28,32 +31,37 @@ bacaIsiFile(Stream) :-
     (   Data == end_of_file -> 
         true
     ;   
-        assertz(Data), 
+        tafsirData(Data), 
         bacaIsiFile(Stream)
     ).
 
-/* helper membersihkan semua fakta lama sebelum ditimpa data save-an */
-bersihkanStateLama :-
-    retractall(urutanPemain(_)),
-    retractall(kartuTangan(_, _)),
-    retractall(kartuTeratas(_)),
-    retractall(giliranSekarang(_)),
-    retractall(arahPermainan(_)),
-    retractall(warnaAktif(_)),
-    retractall(statusAncaman(_)),
-    retractall(warnaSebelumnya(_)),
-    retractall(jenisSebelumnya(_)),
-    retractall(pemainSebelumnya(_)),
-    retractall(statusUni(_)).
+%bonus mimic card
+%ubah format file ke dynamic
+tafsirData(urutan_pemain:UP)     :- !, assertz(urutanPemain(UP)).
+tafsirData(giliran:GS)           :- !, assertz(giliranSekarang(GS)).
+tafsirData(warna_aktif:WA)       :- !, assertz(warnaAktif(WA)).
+tafsirData(arah_permainan:AP)    :- !, assertz(arahPermainan(AP)).
+tafsirData(status_UNI:SU)        :- !, assertz(statusUni(SU)).
+tafsirData(status_ancaman:SA)    :- !, assertz(statusAncaman(SA)).
+tafsirData(warna_sebelumnya:WS)  :- !, assertz(warnaSebelumnya(WS)).
+tafsirData(jenis_sebelumnya:JS)  :- !, assertz(jenisSebelumnya(JS)).
+tafsirData(pemain_sebelumnya:PS) :- !, assertz(pemainSebelumnya(PS)).
 
-/* ubah ke txt manual tanpa atomconcat */
-gabungAtomManual(Atom1, Atom2, HasilAtom) :-
-    name(Atom1, List1),                   % ubah input pemain jadi list ASCII
-    name(Atom2, List2),                   % ubah '.txt' jadi list ASCII
-    gabungListManual(List1, List2, HasilList),  % gabungkan list secara manual
-    name(HasilAtom, HasilList).
+tafsirData(discard_top:Warna-Jenis) :- !, 
+    assertz(kartuTeratas(kartu(Warna, Jenis))).
 
-/* helper pengganti append/3 untuk list */
-gabungListManual([], List, List).
-gabungListManual([Head | Tail], List, [Head | HasilTail]) :-
-    gabungListManual(Tail, List, HasilTail).
+tafsirData(kartu(Pemain):ListKartu) :- !, 
+    assertz(kartuTangan(Pemain, ListKartu)).
+
+tafsirData(kartu_tersembunyi(Pemain):ListHidden) :- !,
+    memulihkanKartuHidden(Pemain, ListHidden).
+
+tafsirData(kartu_aksi_terakhir:none) :- !.
+tafsirData(kartu_aksi_terakhir:Kartu-PemainLama-GiliranLama) :- !,
+    assertz(kartu_aksi_terakhir(Kartu, PemainLama, GiliranLama)).
+
+%bonus sembunyikan kartu
+memulihkanKartuHidden(_, []).
+memulihkanKartuHidden(Pemain, [Kartu|Sisa]) :-
+    assertz(kartuTerhidden(Pemain, Kartu)),
+    memulihkanKartuHidden(Pemain, Sisa).
