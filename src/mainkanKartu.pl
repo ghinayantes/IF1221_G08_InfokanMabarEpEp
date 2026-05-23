@@ -53,7 +53,7 @@ mainkanKartu(NomorUrut) :-
         ;   
             true % Jika kartu angka biasa, lewati saja tanpa mencatat aksi
         ),
-        
+
         eksekusiEfek(Jenis)
     ).
 

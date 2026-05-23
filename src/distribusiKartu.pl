@@ -12,7 +12,7 @@ ambilTujuh(N, [K|R], [K|Ks], D) :-
 cekKartuValid(kartu(W, angka(_))) :- W \= hitam, !. 
 cekKartuValid(kartu(W, J)) :-
     W \= hitam,
-    \+ member(J, [skip, reverse, drawTwo, wild, wildDrawFour]).
+    \+ isMember(J, [skip, reverse, drawTwo, wild, wildDrawFour]).
 
 setKartuAwal([K|R], K, R) :- cekKartuValid(K), !.
 setKartuAwal([_|R], K, D) :- setKartuAwal(R, K, D).
