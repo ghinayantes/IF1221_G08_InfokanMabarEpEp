@@ -56,29 +56,29 @@ $ gprolog --consult-file main.pl
 │   README.md
 │
 └───docs
-│   └───Milestone1_G08.pdf
-│       Milestone2_G08.pdf
+│   ├───Milestone1_G08.pdf
+│   └───Milestone2_G08.pdf
 │
 └───src
     │
-    └───main.pl
-        startgame.pl
-        kartu.pl
-        distribusiKartu.pl
-        pemain.pl
-        lihatKartu.pl
-        lihatCommand.pl
-        mainkanKartu.pl
-        ambilKartu.pl
-        uni.pl
-        tangkap.pl
-        tantang.pl
-        sembunyikanKartu.pl
-        godsHand.pl
-        cekInfo.pl
-        endGame.pl
-        saveGame.pl
-        loadGame.pl
+    ├───main.pl
+    ├───startgame.pl
+    ├───kartu.pl
+    ├───distribusiKartu.pl
+    ├───pemain.pl
+    ├───lihatKartu.pl
+    ├───lihatCommand.pl
+    ├───mainkanKartu.pl
+    ├───ambilKartu.pl
+    ├───uni.pl
+    ├───tangkap.pl
+    ├───tantang.pl
+    ├───sembunyikanKartu.pl
+    ├───godsHand.pl
+    ├───cekInfo.pl
+    ├───endGame.pl
+    ├───saveGame.pl
+    └───loadGame.pl
 ```
 
 ## Features
