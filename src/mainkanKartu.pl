@@ -1,14 +1,15 @@
-mainkanKartu(_) :- %jika sedang di tantang tidak bisa mainkan kartu
+%jika sedang ditantang tidak bisa mainkan kartu
+mainkanKartu(_) :- 
     statusAncaman(aktif),
     write('Anda sedang terkena efek Wild Draw Four!'), nl,
     write('Pilih perintah: "tantang." atau "ambilKartu."'), nl,
-    !, fail.
+    !, fail. 
 
 mainkanKartu(NomorUrut) :-
     giliranSekarang(Pemain),
     kartuTangan(Pemain, Tangan),
     
-    ambilKartuManual(NomorUrut, Tangan, KartuPilihan),
+    nth1(NomorUrut, Tangan, KartuPilihan),
     KartuPilihan = kartu(Warna, Jenis),
     
     cekValid(Warna, Jenis),
@@ -16,57 +17,45 @@ mainkanKartu(NomorUrut) :-
     
     select(KartuPilihan, Tangan, SisaTangan),
     retract(kartuTangan(Pemain, _)),
-    assertz(kartuTangan(Pemain, SisaTangan)),
-    
+    asserta(kartuTangan(Pemain, SisaTangan)),
+
+    % Hapus indeks tersembunyi untuk kartu yang dimainkan, lalu geser indeks lebih besar
+    updateIndeksTersembunyi(Pemain, NomorUrut),
+
     retract(kartuTeratas(_)),
-    assertz(kartuTeratas(KartuPilihan)),
+    asserta(kartuTeratas(KartuPilihan)),
 
-    %bonus tantang
-    warnaAktif(WarnaLama),
-    retractall(warnaSebelumnya(_)),
-    assertz(warnaSebelumnya(WarnaLama)),
-    retractall(pemainSebelumnya(_)),
-    assertz(pemainSebelumnya(Pemain)),
+    % pengecekan kondisi apakah ada pemain yg sdh menghabiskan kartunya
+    (SisaTangan == [] ->
+        nl, endGame, ! 
+    ;
+        % jika tidak ada, lanjutkan alur permainan seperti biasa
+        warnaAktif(WarnaLama),
+        kartuTeratas(kartu(_, JenisLama)), 
+        
+        retractall(warnaSebelumnya(_)),
+        asserta(warnaSebelumnya(WarnaLama)),
+        retractall(jenisSebelumnya(_)),    
+        asserta(jenisSebelumnya(JenisLama)), 
+        
+        retractall(pemainSebelumnya(_)),
+        asserta(pemainSebelumnya(Pemain)),
 
-    (Jenis==wildDrawFour -> retractall(statusAncaman(_)), assertz(statusAncaman(aktif))
-                            ;
-                            retractall(statusAncaman(_)), assertz(statusAncaman(aman))
-                            ),
+        (Jenis == wildDrawFour -> retractall(statusAncaman(_)), 
+        asserta(statusAncaman(aktif)) ; retractall(statusAncaman(_)), asserta(statusAncaman(aman))),
 
-    updateWarnaAktif(Warna),
-    
-    write('Berhasil memainkan: '), cetakKartu(KartuPilihan), nl,
-
-    %bonus mimic card
-    (   (Jenis = skip ; Jenis = reverse ; Jenis = drawTwo ; Jenis = wild ; Jenis = wildDrawFour) ->
-        updateAksiTerakhir(KartuPilihan)
-    ;   
-        true %kalo jenis kartu adalah angka, lewati 
-    ),
-
-    eksekusiEfek(Jenis).
+        updateWarnaAktif(Warna),
+        format('~w memainkan kartu: ', [Pemain]), cetakKartu(KartuPilihan), write('.'), nl,
+        (   (Jenis = skip ; Jenis = reverse ; Jenis = drawTwo ; Jenis = wild ; Jenis = wildDrawFour) ->
+            updateAksiTerakhir(KartuPilihan)
+        ;   
+            true %kalo jenis kartu adalah angka, lewati rules catat kartu aksi
+        ),
+        eksekusiEfek(Jenis)
+    ).
 
 mainkanKartu(_) :-
     write('Gagal memainkan. Nomor urut salah atau kartu tidak cocok dengan meja!'), nl.
-
-    (SisaTangan == [] -> 
-        endGame(Pemain)
-    ;   
-        (Jenis == wildDrawFour -> 
-            gantiGiliran, giliranSekarang(Next),
-            format('Giliran ~w.~n', [Next]) 
-        ; 
-            eksekusiEfek(Jenis)
-        )
-    ).
-
-ambilKartuManual(1, [KartuYangDicari | _], KartuYangDicari) :- !.
-
-/* jika lebih dari 1, cari di sisa list */
-ambilKartuManual(NomorUrut, [_ | Tail], KartuYangDicari) :-
-    NomorUrut > 1,
-    UrutanSelanjutnya is NomorUrut - 1,
-    ambilKartuManual(UrutanSelanjutnya, Tail, KartuYangDicari).
 
 /* helper syarat validasi kartu */
 /* dilempar jika warnanya sama dengan warna aktif di meja */
@@ -80,7 +69,10 @@ cekValid(_, JenisPilihan) :-
     JenisPilihan == JenisTop.
 
 /* dilempar jika itu kartu hitam (wild/wild draw four) */
-cekValid(hitam, _).
+cekValid(hitam, _) :-
+    kartuTeratas(kartu(_, JenisTop)),
+    % Pastikan kartu teratas di meja bukan wild dan BUKAN wildDrawFour
+    \+ isMember(JenisTop, [wild, wildDrawFour]).
 
 /* helper update warna aktif */
 /* Jika kartu hitam, jangan ubah warna meja di sini */
@@ -89,7 +81,7 @@ updateWarnaAktif(hitam) :- !.
 /* jika bukan hitam, ubah warna meja sesuai kartu */
 updateWarnaAktif(Warna) :-
     retract(warnaAktif(_)),
-    assertz(warnaAktif(Warna)).
+    asserta(warnaAktif(Warna)).
 
 /* helper pindah giliran */
 gantiGiliran :-
@@ -100,8 +92,7 @@ gantiGiliran :-
     tentukanSelanjutnya(Arah, Sekarang, ListPemain, Next),
     
     retract(giliranSekarang(_)),
-    assertz(giliranSekarang(Next)),
-    write('Giliran pindah ke: '), write(Next), nl.
+    asserta(giliranSekarang(Next)).
     
 /* main ke kanan, pemain masih di tengah urutan */
 tentukanSelanjutnya(kanan, Sekarang, ListPemain, Next) :-
@@ -134,30 +125,24 @@ sebelahKiri(Sekarang, Next, [_ | Tail]) :-
 cariTerakhir([X], X).
 cariTerakhir([_ | Tail], Terakhir) :- 
     cariTerakhir(Tail, Terakhir).
+/* updateIndeksTersembunyi: hapus indeks yang dimainkan, geser indeks lebih besar ke bawah 1 */
+updateIndeksTersembunyi(Pemain, IndeksDimainkan) :-
+    % Kumpulkan semua indeks tersembunyi milik pemain ini
+    findall(I, kartuTersembunyi(Pemain, I), SemuaIndeks),
+    retractall(kartuTersembunyi(Pemain, _)),
+    assertIndeksBaru(Pemain, SemuaIndeks, IndeksDimainkan).
 
-%bonus tantang------------------------------------------------
-tantang :- 
-    statusAncaman(aktif), !, %ada yang tantang
-    giliranSekarang(Penantang),
-    pemainSebelumnya(Tertantang),
-    warnaSebelumnya(WarnaLama),
-    write('Tantangan dilakukan!'), nl,
-    write('Memeriksa kartu '), write(Tertantang), write('...'), nl,
-
-    kartuTangan(Tertantang, TanganTertantang), 
-    (member(kartu(WarnaLama, _), TanganTertantang) -> %cek apakah kartu di meja ada di tangan tertantang
-        %kartu di meja ada di tangan tertantang
-        write('Tantangan berhasil! '), write(Tertantang), write(' mendapatkan 4 kartu.'), nl,
-        ambilKartu(Tertantang, 4),
-        retractall(statusAncaman(_)), 
-        assertz(statusAncaman(aman))
-    ;   %kartu di meja tidak ada di tangan tertantang
-        format('Tantangan gagal. ~w mendapatkan 6 kartu acak. ~n', [Penantang]), 
-        ambilKartu(Penantang, 6),
-        retractall(statusAncaman(_)),
-        assertz(statusAncaman(aman)),
-        gantiGiliran
-    ).
-%tidak ada yang tantang
-tantang :- write ('Tidak ada kartu Wild Draw Four yang bisa ditantang saat ini.'), nl.
-%------------------------------------------------------------
+assertIndeksBaru(_, [], _).
+assertIndeksBaru(Pemain, [I|T], Dimainkan) :-
+    (I =:= Dimainkan ->
+        % Indeks ini adalah kartu yang dimainkan, buang saja
+        true
+    ; I > Dimainkan ->
+        % Geser turun 1
+        IBaru is I - 1,
+        asserta(kartuTersembunyi(Pemain, IBaru))
+    ;
+        % Indeks lebih kecil, tetap sama
+        asserta(kartuTersembunyi(Pemain, I))
+    ),
+    assertIndeksBaru(Pemain, T, Dimainkan).
