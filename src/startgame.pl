@@ -13,6 +13,8 @@
 :- dynamic(jenisSebelumnya/1).
 % bonus sembunyikan kartu
 :- dynamic(kartuTersembunyi/2).
+%bonus mimic card
+:- dynamic(kartuAksiTerakhir/3).
 
 :- include('kartu.pl').
 :- include('pemain.pl').
@@ -77,6 +79,19 @@ hapusDataLama :-
     retractall(jenisSebelumnya(_)),
     % bonus sembunyikan kartu
     retractall(kartuTersembunyi(_, _)).
+
+%bonus mimic card
+updateAksiTerakhir(kartu(Warna, Jenis)) :-
+    giliranKe(N), !, 
+    giliranSekarang(Pemain),
+    retractall(kartuAksiTerakhir(_, _, _)),
+    assertz(kartuAksiTerakhir(kartu(Warna, Jenis), Pemain, N)).
+
+updateAksiTerakhir(kartu(Warna, Jenis)) :-
+    giliranSekarang(Pemain),
+    retractall(kartuAksiTerakhir(_, _, _)),
+    assertz(kartuAksiTerakhir(kartu(Warna, Jenis), Pemain, 0)).
+
 /* 
 Daftar Query yang dapat digunakan:
 

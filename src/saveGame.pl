@@ -4,10 +4,12 @@ saveGame :-
     giliranSekarang(_),
     write('Masukkan nama file penyimpanan: '), read (InputFile), nl,
     gabungAtomManual(InputFile, '.txt', NamaFile),
+
     open(NamaFile, write, Stream),
     set_output(Stream),
 
     giliranSekarang(GS),
+
     kartuTeratas(KT),
     warnaAktif(WA),
     arahPermainan(AP),
@@ -85,3 +87,4 @@ tampilkanSisaKartu([H|T]) :- !,
     write(','),            
     cetakKartu(H),
     tampilkanSisaKartu(T).
+
