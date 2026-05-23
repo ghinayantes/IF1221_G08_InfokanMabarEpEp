@@ -91,6 +91,7 @@ updateAksiTerakhir(kartu(Warna, Jenis)) :-
     giliranSekarang(Pemain),
     retractall(kartuAksiTerakhir(_, _, _)),
     assertz(kartuAksiTerakhir(kartu(Warna, Jenis), Pemain, 0)).
+
 /* 
 Daftar Query yang dapat digunakan:
 

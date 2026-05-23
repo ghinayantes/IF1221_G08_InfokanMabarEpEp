@@ -9,7 +9,7 @@ inputNamaPemain(N, Acc, Pemain) :-
     validasiNama(Nama, N, Acc, Pemain).
 
 validasiNama(Nama, N, Acc, Pemain) :-
-    (atom(Nama) -> (isHurufKapital(Nama) -> (\+ member(Nama, Acc) ->
+    (atom(Nama) -> (isHurufKapital(Nama) -> (\+ isMember(Nama, Acc) ->
     N1 is N - 1, inputNamaPemain(N1, [Nama|Acc], Pemain) ; write('Nama sudah digunakan. Masukkan nama lain: '),
     read(Next), validasiNama(Next, N, Acc, Pemain)) ; write('Nama harus diawali huruf besar. Masukkan nama lain: '),
     read(Next), validasiNama(Next, N, Acc, Pemain)) ; write('Input tidak valid. Masukkan nama lain: '),
@@ -18,3 +18,7 @@ validasiNama(Nama, N, Acc, Pemain) :-
 isHurufKapital(NamaAtom) :-
     atom_codes(NamaAtom, [First|_]),
     First >= 65, First =< 90.
+
+isMember(X, [X|_]) :- !. 
+isMember(X, [_|T]) :-
+    isMember(X, T).
