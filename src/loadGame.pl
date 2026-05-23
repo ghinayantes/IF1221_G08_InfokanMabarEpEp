@@ -14,7 +14,7 @@ prosesLoadData(NamaFile) :-
     hapusDataLama,
     
     retractall(kartuTerhidden(_, _)),
-    retractall(kartu_aksi_terakhir(_, _, _)),
+    retractall(kartuAksiTerakhir(_, _, _)),
     
     open(NamaFile, read, Stream),
     bacaIsiFile(Stream),
@@ -58,7 +58,7 @@ tafsirData(kartu_tersembunyi(Pemain):ListHidden) :- !,
 
 tafsirData(kartu_aksi_terakhir:none) :- !.
 tafsirData(kartu_aksi_terakhir:Kartu-PemainLama-GiliranLama) :- !,
-    assertz(kartu_aksi_terakhir(Kartu, PemainLama, GiliranLama)).
+    assertz(kartuAksiTerakhir(Kartu, PemainLama, GiliranLama)).
 
 %bonus sembunyikan kartu
 memulihkanKartuHidden(_, []).
