@@ -12,7 +12,7 @@ tangkap(Target) :-
         ambilKartu(Penangkap, 1),
         gantiGiliran
     ;
-        (JumlahTarget =:= 1, \+ statusUni(Target) ->
+        (JumlahTarget =:= 1, \+ sudahUni(Target) ->
             /* Target ketahuan tidak menyerukan UNI */
             format('~w tertangkap tidak menyerukan UNI.~n', [Target]),
             format('~w mendapatkan 2 kartu penalti.~n', [Target]),
@@ -27,14 +27,21 @@ tangkap(Target) :-
         )
     ).
 
+/* helper: cek apakah pemain sudah menyerukan UNI (ada di list statusUni) */
+sudahUni(Pemain) :-
+    statusUni(ListAman),
+    isMember(Pemain, ListAman).
+
 /* helper menggantikan length untuk menghitung isi list */
 hitungKartu([], 0).
 hitungKartu([_ | Tail], Jumlah) :-
     hitungKartu(Tail, Sisa),
     Jumlah is Sisa + 1.
 
-/* helper status aman uni */
-tandaiAman(Pemain) :-
-    statusUni(Pemain), !.
-tandaiAman(Pemain) :-
-    assertz(statusUni(Pemain)).
+/* helper status aman uni — DEPRECATED, digantikan tandaiAman di uni.pl */
+/* Tetap dipertahankan agar tidak ada undefined predicate */
+tandaiAman_legacy(Pemain) :-
+    sudahUni(Pemain), !.
+tandaiAman_legacy(Pemain) :-
+    retract(statusUni(ListAman)),
+    asserta(statusUni([Pemain|ListAman])).
