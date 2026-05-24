@@ -13,9 +13,11 @@
 :- dynamic(jenisSebelumnya/1).
 % bonus sembunyikan kartu
 :- dynamic(kartuTersembunyi/2).
-%bonus mimic card
+% bonus mimic card
 :- dynamic(kartuAksiTerakhir/3).
 :- dynamic(counterGiliran/1).
+% bonus god's hand
+:- dynamic(godsHandDipakai/1).
 
 :- include('kartu.pl').
 :- include('pemain.pl').
@@ -86,7 +88,8 @@ hapusDataLama :-
     retractall(kartuTersembunyi(_, _)),
     % bonus mimic card
     retractall(kartuAksiTerakhir(_, _, _)),
-    retractall(counterGiliran(_)).
+    retractall(counterGiliran(_)),
+    retractall(godsHandDipakai(_)).
 
 %bonus mimic card
 updateAksiTerakhir(kartu(Warna, Jenis)) :-

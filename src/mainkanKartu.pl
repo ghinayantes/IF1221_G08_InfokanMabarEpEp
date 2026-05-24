@@ -107,7 +107,8 @@ gantiGiliran :-
 
     (counterGiliran(N) -> N1 is N + 1 ; N1 = 1),
     retractall(counterGiliran(_)),
-    assertz(counterGiliran(N1)).
+    assertz(counterGiliran(N1)),
+    retractall(godsHandDipakai(_)).
     
 tentukanSelanjutnya(kanan, Sekarang, ListPemain, Next) :-
     sebelahKanan(Sekarang, Next, ListPemain), !.
