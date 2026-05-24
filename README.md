@@ -1,6 +1,6 @@
 # UNI — Praktikum / Tugas Besar
 
-> Implementasi permainan kartu UNO dalam bahasa pemrograman **Prolog** dengan berbagai fitur tambahan seperti tantangan Wild Draw Four, seruan UNI, penyembunyian kartu, dan kejadian acak God's Hand.
+> Implementasi permainan kartu UNO dalam bahasa pemrograman **Prolog** dengan berbagai fitur tambahan seperti tantangan Wild Draw Four, seruan UNI, penyembunyian kartu, kejadian acak God's Hand, dan kartu spesial Mimic.
 
 ## Table of Contents
 - [General Information](#general-information)
@@ -18,7 +18,8 @@ Permainan ini memiliki beberapa fitur bonus di luar aturan UNO standar:
 - **Tantang** — Pemain bisa menantang legalitas Wild Draw Four.
 - **Seruan UNI** — Wajib menyerukan UNI saat kartu tersisa 2, atau bisa ditangkap!
 - **Sembunyikan Kartu** — Sembunyikan kartu tertentu dari pandangan pemain lain.
-- **God's Hand** — Kejadian acak (~15%) yang memindahkan kartu antar pemain secara tak terduga.
+- **God's Hand** — Kejadian acak (~15%) yang memindahkan kartu antar pemain secara tak terduga. Hanya bisa dicoba sekali per giliran.
+- **Mimic Card** — Kartu hitam spesial yang menyalin efek kartu aksi terakhir yang dimainkan.
 
 ## Team Members
 
@@ -75,6 +76,7 @@ $ gprolog --consult-file main.pl
     ├───tantang.pl
     ├───sembunyikanKartu.pl
     ├───godsHand.pl
+    ├───mimicCard.pl
     ├───cekInfo.pl
     ├───endGame.pl
     ├───saveGame.pl
@@ -88,11 +90,12 @@ $ gprolog --consult-file main.pl
 | **Multi-Pemain** | Mendukung 2–4 pemain dengan nama unik berawalan huruf kapital |
 | **Deck Standar** | 108 kartu (angka 0–9, Skip, Reverse, Draw Two, Wild, Wild Draw Four) diacak tiap sesi |
 | **Kartu Spesial** | Efek Skip, Reverse, Draw Two, Wild, dan Wild Draw Four berjalan otomatis |
+| **Mimic Card** | Kartu hitam yang menyalin efek kartu aksi terakhir; berlaku seperti Wild jika belum ada aksi sebelumnya |
 | **Seruan UNI** | Wajib gunakan `uni(No).` saat kartu tersisa 2; lupa = kena `tangkap` |
 | **Tangkap** | Pemain lain bisa menghukum pemain yang lupa menyerukan UNI (+2 kartu penalti) |
 | **Tantang Wild Draw Four** | Tantang pemain jika curiga mereka masih bisa mainkan kartu lain |
 | **Sembunyikan Kartu** | Sembunyikan kartu tertentu dari penglihatan pemain lain |
-| **God's Hand** | Kejadian acak ~15% yang memindahkan kartu secara acak antar pemain |
+| **God's Hand** | Kejadian acak ~15% yang memindahkan kartu secara acak antar pemain; hanya bisa dicoba 1× per giliran |
 | **Save & Load** | Simpan dan lanjutkan sesi permainan kapan saja |
 | **Sistem Poin** | Pemenang ditentukan berdasarkan nilai sisa kartu di tangan lawan |
 
@@ -118,7 +121,7 @@ $ gprolog --consult-file main.pl
 | `tangkap(Nama).` | Menangkap pemain yang lupa menyerukan UNI |
 | `sembunyikanKartu(No).` | Menyembunyikan kartu dari pemain lain |
 | `tampilkanKartu.` | Menampilkan kembali semua kartu tersembunyi |
-| `godsHand.` | Memicu kejadian God's Hand secara acak |
+| `godsHand.` | Memicu kejadian God's Hand secara acak (1× per giliran) |
 | `cekInfo.` | Melihat kartu teratas meja dan status semua pemain |
 | `saveGame.` | Menyimpan status permainan saat ini ke file |
 | `loadGame.` | Memuat kembali permainan yang tersimpan |
