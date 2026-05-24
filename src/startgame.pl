@@ -15,6 +15,7 @@
 :- dynamic(kartuTersembunyi/2).
 %bonus mimic card
 :- dynamic(kartuAksiTerakhir/3).
+:- dynamic(counterGiliran/1).
 
 :- include('kartu.pl').
 :- include('pemain.pl').
@@ -30,6 +31,9 @@
 :- include('endGame.pl').
 :- include('sembunyikanKartu.pl').
 :- include('godsHand.pl').
+:- include('mimicCard.pl').
+:- include('saveGame.pl').
+:- include('loadGame.pl').
 
 startGame :-
     write('Masukkan jumlah pemain: '),
@@ -55,7 +59,8 @@ inisialisasiGame(DaftarNama) :-
     assertz(warnaAktif(W)),
     
     assertz(arahPermainan(kanan)),
-    assertz(statusUni([])),
+    assertz(statusUni([])),   % BUG FIX: statusUni sekarang list pemain yang sudah UNI
+    assertz(statusAncaman(aman)),
     assertz(sisaDeck(DeckFinal)), nl,
 
     write('Urutan pemain: '), tampilkanUrutan(UrutanBaru), write('.'), nl, nl,
@@ -78,19 +83,17 @@ hapusDataLama :-
     retractall(statusAncaman(_)),
     retractall(jenisSebelumnya(_)),
     % bonus sembunyikan kartu
-    retractall(kartuTersembunyi(_, _)).
+    retractall(kartuTersembunyi(_, _)),
+    % bonus mimic card
+    retractall(kartuAksiTerakhir(_, _, _)),
+    retractall(counterGiliran(_)).
 
 %bonus mimic card
 updateAksiTerakhir(kartu(Warna, Jenis)) :-
-    giliranKe(N), !, 
     giliranSekarang(Pemain),
+    (counterGiliran(N) -> true ; N = 0),
     retractall(kartuAksiTerakhir(_, _, _)),
     assertz(kartuAksiTerakhir(kartu(Warna, Jenis), Pemain, N)).
-
-updateAksiTerakhir(kartu(Warna, Jenis)) :-
-    giliranSekarang(Pemain),
-    retractall(kartuAksiTerakhir(_, _, _)),
-    assertz(kartuAksiTerakhir(kartu(Warna, Jenis), Pemain, 0)).
 
 /* 
 Daftar Query yang dapat digunakan:
@@ -109,7 +112,7 @@ arahPermainan(X).: Mengetahui arah putaran permainan saat ini, apakah searah jar
 
 sisaDeck(X).: Melihat tumpukan seluruh kartu yang masih tersisa di deck dan belum diambil.
 
-statusUni(X).: Melihat daftar nama pemain yang sudah berteriak "UNI" karena kartunya sisa satu.
+statusUni(X).: Melihat list nama pemain yang sudah menyerukan UNI di ronde ini.
 
 buatDeckBaru(X).: Menghasilkan daftar 108 kartu UNI yang sudah teracak sempurna.
 
