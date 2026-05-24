@@ -20,7 +20,7 @@ uni(NomorUrut) :-
         warnaAktif(WarnaLama),
         kartuTeratas(kartu(_, JenisLama)),
 
-        select(KartuPilihan, Tangan, SisaTangan),
+        hapusKartuDariTangan(KartuPilihan, Tangan, SisaTangan), % BUG FIX: select -> hapusKartuDariTangan
         retract(kartuTangan(Pemain, _)),
         assertz(kartuTangan(Pemain, SisaTangan)),
 
@@ -69,3 +69,11 @@ uni(NomorUrut) :-
 
 uni(_) :-
     write('Gagal! Kartu yang dipilih tidak valid, tidak cocok dengan kartu di meja, atau indeks di luar batas.'), nl.
+
+/* Jika sudah ada, tidak tambah duplikat */
+tandaiAman(Pemain) :-
+    statusUni(ListAman),
+    isMember(Pemain, ListAman), !.  % sudah ada, tidak perlu ditambahkan
+tandaiAman(Pemain) :-
+    retract(statusUni(ListAman)),
+    asserta(statusUni([Pemain|ListAman])).
