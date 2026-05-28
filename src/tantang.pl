@@ -13,7 +13,7 @@ tantang :-
     ( ( isMember(kartu(WarnaLama, _), TanganTertantang) 
       ; isMember(kartu(_, JenisTop), TanganTertantang) 
       ) -> 
-        format('Tantangan berhasil! ~w secara ilegal memainkan Wild Draw Four.~n', [Tertantang]),
+        format('Tantangan berhasil! ~w secara ilegal memainkan Wild Draw Four dan mendapatkan 4 kartu acak.~n', [Tertantang]),
         ambilKartu(Tertantang, 4),
         retractall(statusAncaman(_)),
         asserta(statusAncaman(aman)),
