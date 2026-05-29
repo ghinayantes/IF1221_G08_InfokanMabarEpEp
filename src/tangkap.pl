@@ -1,3 +1,14 @@
+tangkap(_) :- write('Tidak ada permainan yang sedang berjalan. Ketik "start." untuk mulai.'), nl.
+% Edge case: pemain menangkap dirinya sendiri
+tangkap(Target) :-
+    giliranSekarang(Target), !,
+    write('Kamu tidak bisa menangkap dirimu sendiri!'), nl.
+
+% Edge case: target bukan pemain yang valid
+tangkap(Target) :-
+    \+ kartuTangan(Target, _), !,
+    format('Pemain ~w tidak ditemukan dalam permainan.~n', [Target]).
+
 tangkap(Target) :-
     giliranSekarang(Penangkap),
     kartuTangan(Target, TanganTarget),
