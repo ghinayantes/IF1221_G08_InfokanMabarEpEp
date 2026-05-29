@@ -1,3 +1,7 @@
+godsHand :- 
+    \+ giliranSekarang(_), !,
+    write('Tidak ada permainan yang sedang berjalan. Ketik "start." untuk mulai.'), nl.
+
 godsHand :-
     % Cek apakah pemain aktif sudah pakai godsHand di giliran ini
     giliranSekarang(Pemain),
@@ -40,7 +44,7 @@ godsHandEksekusi :-
 
         hapusElemen(KartuPilihan, TanganSumber, TanganSumberBaru),
         kartuTangan(PemainTujuan, TanganTujuan),
-        append(TanganTujuan, [KartuPilihan], TanganTujuanBaru),
+        gabungList(TanganTujuan, [KartuPilihan], TanganTujuanBaru),
 
         retract(kartuTangan(PemainSumber, _)),
         asserta(kartuTangan(PemainSumber, TanganSumberBaru)),
