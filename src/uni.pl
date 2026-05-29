@@ -5,12 +5,18 @@ ambilKartuAtIndeks(N, [_|SisaTangan], Kartu) :-
     N1 is N - 1,
     ambilKartuAtIndeks(N1, SisaTangan, Kartu).
 
+uni(_) :- write('Tidak ada permainan yang sedang berjalan. Ketik "start." untuk mulai.'), nl.
+
 uni(NomorUrut) :-
     giliranSekarang(Pemain),
     kartuTangan(Pemain, Tangan),
     hitungKartu(Tangan, JumlahKartu),
 
     (JumlahKartu =:= 2 ->
+        % validasi indeks
+        (NomorUrut >= 1, NomorUrut =< 2 -> true ;
+            write('Nomor kartu tidak valid. Masukkan 1 atau 2.'), nl, fail),
+
         ambilKartuAtIndeks(NomorUrut, Tangan, KartuPilihan),
         KartuPilihan = kartu(Warna, Jenis),
         
