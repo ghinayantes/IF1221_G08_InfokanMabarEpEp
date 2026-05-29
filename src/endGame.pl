@@ -1,4 +1,5 @@
 /* Nilai kartu */
+hitungNilaiKartu(kartu(_, angka(0)), 1) :- !.
 hitungNilaiKartu(kartu(_, angka(N)), N) :- !.
 hitungNilaiKartu(kartu(_, skip), 10).
 hitungNilaiKartu(kartu(_, reverse), 10).
@@ -19,13 +20,13 @@ hitungJumlahKartu([_|Sisa], Jumlah) :-
     hitungJumlahKartu(Sisa, JmlSisa),
     Jumlah is JmlSisa + 1.
 
-/* nth1 manual */
-nth1Manual(1, [H|_], H) :- !.
-nth1Manual(N, [_|T], X) :-
+% helper 
+ambilElemenKe(1, [H|_], H) :- !.
+ambilElemenKe(N, [_|T], X) :-
     N > 1,
     N1 is N - 1,
-    nth1Manual(N1, T, X).
-nth1Manual(_, [], _) :- fail.
+    ambilElemenKe(N1, T, X).
+ambilElemenKe(_, [], _) :- fail.
 
 /* cariIndeks: cari posisi (1-based) suatu elemen dalam list */
 cariIndeks(Elem, [Elem|_], 1) :- !.
@@ -56,17 +57,15 @@ comparePeringkat('<', data(_, P1, _, _), data(_, P2, _, _)) :-
     P1 < P2, !.
 comparePeringkat('>', data(_, P1, _, _), data(_, P2, _, _)) :- 
     P1 > P2, !.
-
 comparePeringkat('<', data(_, _, J1, _), data(_, _, J2, _)) :- 
     J1 < J2, !.
 comparePeringkat('>', data(_, _, J1, _), data(_, _, J2, _)) :- 
     J1 > J2, !.
-
 comparePeringkat('<', data(_, _, _, U1), data(_, _, _, U2)) :- 
     U1 < U2, !.
 comparePeringkat('>', _, _).
 
-/* Sorting manual */
+/* Sorting */
 harusTukar(A, B) :-
     comparePeringkat('>', A, B).
 
@@ -124,21 +123,20 @@ tampilkanPoinPemain([]).
 tampilkanPoinPemain([P|Sisa]) :-
     format('~w: ', [P]),
     kartuTangan(P, Tangan),
-    (Tangan == [] ->
-        write('kartu habis = 0 poin')
-    ;
+    (Tangan == [] -> write('kartu habis = 0 poin') ;
         cetakNamaKartu(Tangan),
         write(' = '),
         cetakNilaiKartu(Tangan),
         hitungTotalPoin(Tangan, Total),
-        format(' = ~w poin', [Total])
-    ),
-    nl,
+        format(' = ~w poin', [Total])), nl,
     tampilkanPoinPemain(Sisa).
 
 endGame :-
-    pemainMenang(Pemenang),
-    nl,
+    (modeTurnamen ->
+        endGameTurnamen ; endGameKlasik).
+
+endGameKlasik :-
+    pemainMenang(Pemenang), nl,
     format('Permainan selesai! ~w menghabiskan semua kartunya!~n~n', [Pemenang]),
     write('Berikut perhitungan poin sisa kartu.'), nl,
 
