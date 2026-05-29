@@ -1,3 +1,7 @@
+lihatCommand :- 
+    \+ giliranSekarang(_), !, % JIKA tidak ada giliran aktif, baru cetak error
+    write('Tidak ada permainan yang sedang berjalan. Ketik "start." untuk mulai.'), nl.
+
 lihatCommand :-
     (kartuTeratas(kartu(hitam, wildDrawFour)) -> commandDrawFour ; commandNormal).
 
@@ -14,6 +18,9 @@ commandNormal :-
     write('3. uni(NomorUrut)'), nl,
     write('4. sembunyikanKartu(NomorUrut)'), nl,
     write('5. godsHand.'), nl,
+    % Tampilkan swapKartu jika mode turnamen
+    (modeTurnamen -> write('6. swapKartu(NomorUrutKartuKu, NomorUrutKartuTeman)'), nl
+    ; true),
     tampilkanCommandTampilkan,
     tampilkanAksiPendukung.
 
@@ -21,7 +28,7 @@ commandNormal :-
 tampilkanCommandTampilkan :-
     giliranSekarang(Pemain),
     kartuTersembunyi(Pemain, _), !,
-    write('6. tampilkanKartu'), nl.
+    write('7. tampilkanKartu'), nl.
 
 tampilkanCommandTampilkan.
 

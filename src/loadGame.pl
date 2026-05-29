@@ -10,11 +10,16 @@ loadGame :-
 
 prosesLoadData(NamaFile) :-
     hapusDataLama,
-    open(NamaFile, read, Stream),
-    bacaIsiFile(Stream),
-    close(Stream),
-    % Fallback: jika file lama tidak punya sisa_deck, inisialisasi deck kosong
+    % catch untuk file corrupt
+    catch((open(NamaFile, read, Stream),
+            bacaIsiFile(Stream),
+            close(Stream)),
+        _Error,
+        (write('File rusak atau format tidak valid. Load dibatalkan.'), nl,
+            fail)),
     (sisaDeck(_) -> true ; assertz(sisaDeck([]))),
+    % Fallback jika file klasik tidak punya data mode 
+    (modeTurnamen -> true ; true),
     giliranSekarang(Pemain),
     format('Status permainan berhasil dimuat dari ~w.~n', [NamaFile]),
     format('Melanjutkan giliran ~w.~n', [Pemain]).
@@ -22,14 +27,15 @@ prosesLoadData(NamaFile) :-
 /* Baca term satu per satu sampai end_of_file */
 bacaIsiFile(Stream) :-
     read(Stream, Data),
-    (   Data == end_of_file ->
-        true
-    ;
+    (   Data == end_of_file -> true ;
         tafsirData(Data),
-        bacaIsiFile(Stream)
-    ).
+        bacaIsiFile(Stream)).
 
 /* Penafsiran setiap baris term dalam file */
+tafsirData(mode:turnamen)        :- !, assertz(modeTurnamen).
+tafsirData(mode:klasik)          :- !.
+tafsirData(tim1:T1)              :- !, assertz(tim1(T1)).
+tafsirData(tim2:T2)              :- !, assertz(tim2(T2)).
 tafsirData(urutan_pemain:UP)     :- !, assertz(urutanPemain(UP)).
 tafsirData(giliran:GS)           :- !, assertz(giliranSekarang(GS)).
 tafsirData(warna_aktif:WA)       :- !, assertz(warnaAktif(WA)).

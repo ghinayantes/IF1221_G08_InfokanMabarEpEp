@@ -9,6 +9,11 @@ mainkanKartu(NomorUrut) :-
     giliranSekarang(Pemain),
     kartuTangan(Pemain, Tangan),
     
+    % validasi indeks
+    hitungPanjang(Tangan, JumlahKartu),
+    (NomorUrut >= 1, NomorUrut =< JumlahKartu -> true ;
+        format('Nomor kartu ~w tidak valid (kamu punya ~w kartu).~n', [NomorUrut, JumlahKartu]), fail),
+
     ambilKartuAtIndeks(NomorUrut, Tangan, KartuPilihan),
     KartuPilihan = kartu(Warna, Jenis),
     
@@ -108,7 +113,8 @@ gantiGiliran :-
     (counterGiliran(N) -> N1 is N + 1 ; N1 = 1),
     retractall(counterGiliran(_)),
     assertz(counterGiliran(N1)),
-    retractall(godsHandDipakai(_)).
+    retractall(godsHandDipakai(_)),
+    retractall(sudahSwap).
     
 tentukanSelanjutnya(kanan, Sekarang, ListPemain, Next) :-
     sebelahKanan(Sekarang, Next, ListPemain), !.
@@ -135,9 +141,23 @@ cariTerakhir([_ | Tail], Terakhir) :-
     cariTerakhir(Tail, Terakhir).
 
 updateIndeksTersembunyi(Pemain, IndeksDimainkan) :-
-    findall(I, kartuTersembunyi(Pemain, I), SemuaIndeks),
+    kumpulkanIndeksTersembunyi(Pemain, SemuaIndeks),
     retractall(kartuTersembunyi(Pemain, _)),
     assertIndeksBaru(Pemain, SemuaIndeks, IndeksDimainkan).
+
+/* Mengumpulkan semua indeks kartu tersembunyi milik Pemain ke dalam list */
+kumpulkanIndeksTersembunyi(Pemain, Hasil) :-
+    kumpulkanIndeksTersembunyi_(Pemain, 1, Hasil).
+
+kumpulkanIndeksTersembunyi_(Pemain, I, [I|Sisa]) :-
+    kartuTersembunyi(Pemain, I), !,
+    I1 is I + 1,
+    kumpulkanIndeksTersembunyi_(Pemain, I1, Sisa).
+kumpulkanIndeksTersembunyi_(Pemain, I, Sisa) :-
+    kartuTersembunyi(Pemain, J), J >= I, !,
+    I1 is I + 1,
+    kumpulkanIndeksTersembunyi_(Pemain, I1, Sisa).
+kumpulkanIndeksTersembunyi_(_, _, []).
 
 assertIndeksBaru(_, [], _).
 assertIndeksBaru(Pemain, [I|T], Dimainkan) :-

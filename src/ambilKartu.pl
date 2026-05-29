@@ -1,3 +1,6 @@
+ambilKartu :- 
+    \+ giliranSekarang(_), !,
+    write('Tidak ada permainan yang sedang berjalan. Ketik "start." untuk mulai.'), nl.
 % bonus tantang
 ambilKartu :- %pemain pilih ambilkartu, bukan tantang
     statusAncaman(aktif), !, 
@@ -48,7 +51,6 @@ ambilKartu(Pemain, Jumlah) :-
     
 
 /* helper ambil N kartu dari deck */
-
 ambilN(0, Deck, [], Deck) :- !.
 ambilN(N, [K|RestDeck], [K|RestAmbil], SisaDeck) :-
     N > 0,

@@ -18,6 +18,12 @@
 :- dynamic(counterGiliran/1).
 % bonus god's hand
 :- dynamic(godsHandDipakai/1).
+% bonus mode turnamen
+:- dynamic(modeTurnamen/0).
+:- dynamic(tim1/1).
+:- dynamic(tim2/1).
+:- dynamic(sudahSwap/0).
+
 
 :- include('kartu.pl').
 :- include('pemain.pl').
@@ -36,12 +42,33 @@
 :- include('mimicCard.pl').
 :- include('saveGame.pl').
 :- include('loadGame.pl').
+:- include('turnamen.pl').
+:- include('swapKartu.pl').
 
 startGame :-
-    write('Masukkan jumlah pemain: '),
-    read(N),
-    (N >= 2, N =< 4 -> nl, inputNamaPemain(N, [], DaftarNama),
-    inisialisasiGame(DaftarNama) ; write('Mohon masukkan angka antara 2 - 4.'), nl, startGame).
+    write('Tersedia 2 mode permainan.'), nl,
+    write('1. Mode klasik'), nl,
+    write('2. Mode turnamen'), nl,
+    write('Pilih mode permainan: '),
+    read(Mode),
+    (Mode == 1 -> nl,
+        write('Permainan dimulai dalam mode klasik.'), nl, nl,
+        write('Masukkan jumlah pemain: '),
+        read(N),
+        (N >= 2, N =< 4 ->
+            nl, inputNamaPemain(N, [], DaftarNama),
+            inisialisasiGame(DaftarNama)
+        ;
+            write('Mohon masukkan angka antara 2 - 4.'), nl, startGame
+        )
+    ; Mode == 2 ->
+        nl,
+        write('Permainan dimulai dalam mode turnamen.'), nl, nl,
+        inputNamaPemain(4, [], DaftarNama),
+        inisialisasiGameTurnamen(DaftarNama)
+    ;
+        write('Pilihan tidak valid. Masukkan 1 atau 2.'), nl, startGame
+    ).
 
 inisialisasiGame(DaftarNama) :-
     hapusDataLama,
@@ -70,6 +97,38 @@ inisialisasiGame(DaftarNama) :-
     write('Kartu discard top: '), cetakKartu(KartuAwal), nl, nl,
     format('Giliran ~w.~n', [P1]), !.
 
+% bonus mode turnamen
+inisialisasiGameTurnamen(DaftarNama) :-
+    hapusDataLama,
+    acakList(DaftarNama, UrutanBaru),
+    buatDeckBaru(DeckLengkap),
+    bagiKartuPemain(UrutanBaru, DeckLengkap, DeckSisa),
+ 
+    (setKartuAwal(DeckSisa, KartuAwal, DeckFinal) -> true ;
+        write('Gagal menetapkan kartu awal!'), nl, fail),
+ 
+    assertz(modeTurnamen),
+    bentukTim(UrutanBaru),
+ 
+    assertz(urutanPemain(UrutanBaru)),
+    UrutanBaru = [P1|_],
+    assertz(giliranSekarang(P1)),
+    assertz(kartuTeratas(KartuAwal)),
+    KartuAwal = kartu(W, _),
+    assertz(warnaAktif(W)),
+    assertz(arahPermainan(kanan)),
+    assertz(statusUni([])),
+    assertz(statusAncaman(aman)),
+    assertz(sisaDeck(DeckFinal)), nl,
+ 
+    write('Membentuk tim secara acak...'), nl, nl,
+    tampilkanTim, nl,
+    write('Urutan pemain: '), tampilkanUrutan(UrutanBaru), write('.'), nl, nl,
+    write('Setiap pemain mendapatkan 7 kartu acak.'), nl, nl,
+    write('Kartu discard top: '), cetakKartu(KartuAwal), nl, nl,
+    format('Giliran ~w.~n', [P1]), !.
+ 
+
 hapusDataLama :-
     retractall(urutanPemain(_)),
     retractall(giliranSekarang(_)),
@@ -89,7 +148,12 @@ hapusDataLama :-
     % bonus mimic card
     retractall(kartuAksiTerakhir(_, _, _)),
     retractall(counterGiliran(_)),
-    retractall(godsHandDipakai(_)).
+    retractall(godsHandDipakai(_)),
+    % bonus mode turnamen
+    retractall(modeTurnamen),
+    retractall(tim1(_)),
+    retractall(tim2(_)),
+    retractall(sudahSwap).
 
 %bonus mimic card
 updateAksiTerakhir(kartu(Warna, Jenis)) :-
