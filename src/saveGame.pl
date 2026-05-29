@@ -11,6 +11,13 @@ saveGame :-
 
     open(NamaFile, write, Stream),
 
+    % Simpan mode permainan dan data tim jika turnamen
+    (modeTurnamen -> format(Stream, 'mode:turnamen.~n', []),
+        tim1(Tim1), tim2(Tim2),
+        format(Stream, 'tim1:~q.~n', [Tim1]),
+        format(Stream, 'tim2:~q.~n', [Tim2]) ;
+        format(Stream, 'mode:klasik.~n', [])),
+
     urutanPemain(UP),
     giliranSekarang(GS),
     kartuTeratas(KT),
@@ -27,11 +34,8 @@ saveGame :-
     format(Stream, 'giliran:~q.~n', [GS]),
 
     KT = kartu(KW, KJ),
-    (KJ = angka(KN) ->
-        format(Stream, 'discard_top:~w-angka(~w).~n', [KW, KN])
-    ;
-        format(Stream, 'discard_top:~w-~w.~n', [KW, KJ])
-    ),
+    (KJ = angka(KN) -> format(Stream, 'discard_top:~w-angka(~w).~n', [KW, KN]) ;
+        format(Stream, 'discard_top:~w-~w.~n', [KW, KJ])),
 
     format(Stream, 'warna_aktif:~w.~n', [WA]),
     format(Stream, 'arah_permainan:~w.~n', [AP]),
@@ -45,14 +49,11 @@ saveGame :-
     simpanKartuTersembunyi(Stream, UP),
 
     % Simpan kartu aksi terakhir untuk mimic card
-    (kartuAksiTerakhir(KA, KAPemain, KAGiliran) ->
-        KA = kartu(KAW, KAJ),
-        format(Stream, 'kartu_aksi_terakhir:~w-~w-~q-~w.~n', [KAW, KAJ, KAPemain, KAGiliran])
-    ;
-        format(Stream, 'kartu_aksi_terakhir:none.~n', [])
-    ),
+    (kartuAksiTerakhir(KA, KAPemain, KAGiliran) -> KA = kartu(KAW, KAJ),
+        format(Stream, 'kartu_aksi_terakhir:~w-~w-~q-~w.~n', [KAW, KAJ, KAPemain, KAGiliran]) ;
+        format(Stream, 'kartu_aksi_terakhir:none.~n', [])),
 
-    % Simpan sisa deck agar ambilKartu tetap bisa berjalan setelah load
+    % Simpan sisa deck 
     sisaDeck(SD),
     format(Stream, 'sisa_deck:[', []),
     tulisListKartu(Stream, SD),
@@ -64,8 +65,7 @@ saveGame :-
 saveGame :-
     write('Tidak ada permainan yang sedang berjalan.'), nl.
 
-/* Tulis kartu tangan tiap pemain:
-   kartu('Nama'):[merah-5,hitam-wild]. */
+/* Tulis kartu tangan tiap pemain */
 simpanKartuPemain(_, []).
 simpanKartuPemain(Stream, [P|T]) :-
     kartuTangan(P, ListKartu),
@@ -82,16 +82,14 @@ tulisListKartu(Stream, [K|T]) :-
     write(Stream, ','),
     tulisListKartu(Stream, T).
 
-% Gunakan cetakKartu dari distribusiKartu.pl, tapi arahkan ke Stream
 tulisKartuAtom(Stream, kartu(W, angka(N))) :- !,
     format(Stream, '~w-angka(~w)', [W, N]).
 tulisKartuAtom(Stream, kartu(W, J)) :-
     format(Stream, '~w-~w', [W, J]).
 
-/* Tulis indeks kartu tersembunyi tiap pemain:
-   tersembunyi('Nama'):[1,3]. */
+/* Tulis indeks kartu tersembunyi tiap pemain */
 simpanKartuTersembunyi(_, []).
 simpanKartuTersembunyi(Stream, [P|T]) :-
-    findall(I, kartuTersembunyi(P, I), Indeks),
+    kumpulkanIndeksTersembunyi(P, Indeks),
     format(Stream, 'tersembunyi(~q):~q.~n', [P, Indeks]),
     simpanKartuTersembunyi(Stream, T).
