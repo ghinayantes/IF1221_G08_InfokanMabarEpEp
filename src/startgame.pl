@@ -22,8 +22,6 @@
 :- dynamic(modeTurnamen/0).
 :- dynamic(tim1/1).
 :- dynamic(tim2/1).
-:- dynamic(sudahSwap/0).
-
 
 :- include('kartu.pl').
 :- include('pemain.pl').
