@@ -6,11 +6,6 @@ swapKartu(_, _) :-
     \+ modeTurnamen, !,
     write('Perintah swapKartu hanya tersedia di mode turnamen.'), nl.
 
-swapKartu(_, _) :-
-    sudahSwap, !,
-    write('Kamu sudah melakukan swapKartu di giliran ini!'), nl,
-    write('Silakan mainkanKartu(NomorUrut). atau ambilKartu.'), nl.
-
 swapKartu(IdxMilikku, IdxTemanku) :-
     giliranSekarang(Pemain),
     % validasi
@@ -44,8 +39,6 @@ swapKartu(IdxMilikku, IdxTemanku) :-
     asserta(kartuTangan(Pemain, TanganKuBaru)),
     retract(kartuTangan(Teman, _)),
     asserta(kartuTangan(Teman, TanganTemanBaru)),
-
-    asserta(sudahSwap),
 
     format('~w menukar ', [Pemain]),
     cetakKartu(KartuKu),

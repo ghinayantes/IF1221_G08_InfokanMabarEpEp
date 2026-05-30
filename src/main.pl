@@ -176,12 +176,12 @@ help :-
         write('  |   ambilKartu.             : Ambil kartu dari deck.                      |'), nl,
         write('  |   tantang.                : Tantang Wild Draw Four lawan.               |'), nl,
         write('  |   sembunyikanKartu(N).    : Sembunyikan kartu ke-N.                     |'), nl,
-        write('  |   tampilkanKartu.         : Tampilkan kembali kartu tersembunyi.         |'), nl,
-        write('  |   godsHand.               : Coba keberuntungan (peluang 15%).            |'), nl,
+        write('  |   tampilkanKartu.         : Tampilkan kembali kartu tersembunyi.        |'), nl,
+        write('  |   godsHand.               : Coba keberuntungan (peluang 15%).           |'), nl,
         (modeTurnamen ->
             write('  |   swapKartu(NoKu,NoTeman). : Tukar kartu dgn teman setim (Turnamen).    |'), nl
         ; true),
-        write('  | AKSI PENDUKUNG (tidak mengakhiri giliran):                             |'), nl,
+        write('  | AKSI PENDUKUNG (tidak mengakhiri giliran):                              |'), nl,
         write('  |   lihatKartu.             : Lihat kartu di tanganmu.                    |'), nl,
         write('  |   cekInfo.                : Lihat status meja & jumlah kartu.           |'), nl,
         write('  |   lihatCommand.           : Tampilkan aksi yang tersedia.               |'), nl,
@@ -194,9 +194,21 @@ help :-
         write('Silakan ketik "start." untuk memulai permainan.'), nl).
 exit :-
     \+ giliranSekarang(_), !,
-    write(' Anda sudah keluar sebelumnya, tidak ada permainan yang sedang berjalan. '), nl.
+    write(' Anda sudah keluar sebelumnya, tidak ada permainan yang sedang berjalan. '), nl. 
+
+exit :- 
+    giliranSekarang(_), !, 
+    write('Permainan sedang berjalan, simpan permainan saat ini sebelum keluar? (y/n): '), 
+    read(Pilihan), nl,
+    ((Pilihan == yes ; Pilihan == 'y') -> write('Melanjutkan ke proses penyimpanan game...'), saveGame, nl, 
+        exit_aksi ; (Pilihan == no ; Pilihan == 'n') -> write('Keluar tanpa menyimpan...'), nl,
+        exit_aksi ; write('Pilihan tidak valid! Masukkan "y." atau "n."'), nl, exit).
+
 exit :-
+    exit_aksi.
+
+exit_aksi :-
     hapusDataLama,
-    write(' Terima kasih telah bermain UNI! Sampai jumpa lagi. '), nl.
+    write('Terima kasih telah bermain UNI! Sampai jumpa lagi. '), nl.
 
 :- initialization(main).

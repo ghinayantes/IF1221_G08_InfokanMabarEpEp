@@ -1,12 +1,21 @@
+loadGame :- 
+    giliranSekarang(_), !, 
+    write('Permainan sedang berjalan, simpan permainan saat ini? (y/n): '), 
+    read(Pilihan), nl,
+    ((Pilihan == yes ; Pilihan == 'y') -> saveGame,
+        nl, write('Melanjutkan ke proses pemuatan game...'), nl,
+        loadGame_Aksi ; (Pilihan == no ; Pilihan == 'n') -> write('Melanjutkan tanpa menyimpan...'), nl,
+        loadGame_Aksi ; write('Pilihan tidak valid! Masukkan "y." atau "n."'), nl,
+        loadGame).
+
 loadGame :-
+    loadGame_Aksi.
+
+loadGame_Aksi :-
     write('Masukkan nama file yang akan dimuat: '),
     read(InputFile),
     gabungAtomManual(InputFile, '.txt', NamaFile),
-    (   file_exists(NamaFile) ->
-        prosesLoadData(NamaFile)
-    ;
-        format('Gagal! File ~w tidak ditemukan di direktori.~n', [NamaFile])
-    ).
+    (file_exists(NamaFile) -> prosesLoadData(NamaFile) ; format('Gagal! File ~w tidak ditemukan di direktori.~n', [NamaFile])).
 
 prosesLoadData(NamaFile) :-
     hapusDataLama,
