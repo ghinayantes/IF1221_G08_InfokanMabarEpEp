@@ -179,7 +179,7 @@ help :-
         write('  |   tampilkanKartu.         : Tampilkan kembali kartu tersembunyi.         |'), nl,
         write('  |   godsHand.               : Coba keberuntungan (peluang 15%).            |'), nl,
         (modeTurnamen ->
-            write('  |   swapKartu(NoKu,NoTeman). : Tukar kartu dgn teman setim (Turnamen).  |'), nl
+            write('  |   swapKartu(NoKu,NoTeman). : Tukar kartu dgn teman setim (Turnamen).    |'), nl
         ; true),
         write('  | AKSI PENDUKUNG (tidak mengakhiri giliran):                             |'), nl,
         write('  |   lihatKartu.             : Lihat kartu di tanganmu.                    |'), nl,
