@@ -67,7 +67,7 @@ comparePeringkat('>', _, _).
 
 /* Sorting */
 harusTukar(A, B) :-
-    comparePeringkat('>', A, B).
+    comparePeringkat('<', A, B).
 
 insertSorted(X, [], [X]).
 insertSorted(X, [H|T], [X,H|T]) :-
