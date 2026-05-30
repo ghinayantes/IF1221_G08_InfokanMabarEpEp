@@ -6,6 +6,7 @@ hitungNilaiKartu(kartu(_, reverse), 10).
 hitungNilaiKartu(kartu(_, drawTwo), 10).
 hitungNilaiKartu(kartu(_, wild), 20).
 hitungNilaiKartu(kartu(_, wildDrawFour), 20).
+hitungNilaiKartu(kartu(_, mimic), 20).
 
 /* Hitung total poin */
 hitungTotalPoin([], 0).
