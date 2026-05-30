@@ -1,3 +1,6 @@
+tantang :- 
+    \+ giliranSekarang(_), !,
+    write('Tidak ada permainan yang sedang berjalan. Ketik "start." untuk mulai.'), nl.
 tantang :-
     statusAncaman(aktif), !, 
     giliranSekarang(Penantang),
@@ -35,4 +38,3 @@ tantang :-
 % else
 tantang :- 
     write('Tidak ada kartu Wild Draw Four yang bisa ditantang saat ini.'), nl.
-tantang :- write('Tidak ada permainan yang sedang berjalan. Ketik "start." untuk mulai.'), nl.
