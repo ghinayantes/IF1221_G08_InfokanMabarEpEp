@@ -6,6 +6,7 @@ hitungNilaiKartu(kartu(_, reverse), 10).
 hitungNilaiKartu(kartu(_, drawTwo), 10).
 hitungNilaiKartu(kartu(_, wild), 20).
 hitungNilaiKartu(kartu(_, wildDrawFour), 20).
+hitungNilaiKartu(kartu(_, mimic), 20).
 
 /* Hitung total poin */
 hitungTotalPoin([], 0).
@@ -20,7 +21,7 @@ hitungJumlahKartu([_|Sisa], Jumlah) :-
     hitungJumlahKartu(Sisa, JmlSisa),
     Jumlah is JmlSisa + 1.
 
-% helper 
+/* helper */
 ambilElemenKe(1, [H|_], H) :- !.
 ambilElemenKe(N, [_|T], X) :-
     N > 1,
@@ -34,15 +35,13 @@ cariIndeks(Elem, [_|Sisa], N) :-
     cariIndeks(Elem, Sisa, N1),
     N is N1 + 1.
 
-/* Data pemain */
-dataPemain(Player, data(Player, Poin, JumlahKartu, Urutan)) :-
+dataPemain(Player, data(Player, Poin, Urutan)) :-
     kartuTangan(Player, Tangan),
     hitungTotalPoin(Tangan, Poin),
-    hitungJumlahKartu(Tangan, JumlahKartu),
     urutanPemain(ListUrutan),
     cariIndeks(Player, ListUrutan, Urutan).
 
-/* Kumpulkan data pemain */
+/* Kumpulkan data semua pemain */
 semuaDataPemain(Hasil) :-
     urutanPemain(ListPemain),
     kumpulkanDataPemain(ListPemain, Hasil).
@@ -52,20 +51,16 @@ kumpulkanDataPemain([P|Sisa], [Data|SisaData]) :-
     dataPemain(P, Data),
     kumpulkanDataPemain(Sisa, SisaData).
 
-/* Compare ranking */
-comparePeringkat('<', data(_, P1, _, _), data(_, P2, _, _)) :- 
+comparePeringkat('<', data(_, P1, _), data(_, P2, _)) :-
     P1 < P2, !.
-comparePeringkat('>', data(_, P1, _, _), data(_, P2, _, _)) :- 
+comparePeringkat('>', data(_, P1, _), data(_, P2, _)) :-
     P1 > P2, !.
-comparePeringkat('<', data(_, _, J1, _), data(_, _, J2, _)) :- 
-    J1 < J2, !.
-comparePeringkat('>', data(_, _, J1, _), data(_, _, J2, _)) :- 
-    J1 > J2, !.
-comparePeringkat('<', data(_, _, _, U1), data(_, _, _, U2)) :- 
+/* Poin sama --> urutan main lebih awal menang */
+comparePeringkat('<', data(_, _, U1), data(_, _, U2)) :-
     U1 < U2, !.
 comparePeringkat('>', _, _).
 
-/* Sorting */
+/* Sorting insertion sort */
 harusTukar(A, B) :-
     comparePeringkat('>', A, B).
 
@@ -86,7 +81,7 @@ urutkanRanking(Data, HasilUrut) :-
 
 /* Cetak ranking */
 cetakPeringkat([], _).
-cetakPeringkat([data(Nama, Poin, _, _)|Sisa], No) :-
+cetakPeringkat([data(Nama, Poin, _)|Sisa], No) :-
     write(No), write('. '),
     write(Nama),
     write(' ('), write(Poin), write(' poin)'), nl,
@@ -123,28 +118,37 @@ tampilkanPoinPemain([]).
 tampilkanPoinPemain([P|Sisa]) :-
     format('~w: ', [P]),
     kartuTangan(P, Tangan),
-    (Tangan == [] -> write('kartu habis = 0 poin') ;
+    (Tangan == [] ->
+        write('kartu habis = 0 poin')
+    ;
         cetakNamaKartu(Tangan),
         write(' = '),
         cetakNilaiKartu(Tangan),
         hitungTotalPoin(Tangan, Total),
-        format(' = ~w poin', [Total])), nl,
+        format(' = ~w poin', [Total])
+    ), nl,
     tampilkanPoinPemain(Sisa).
 
+
 endGame :-
-    (modeTurnamen ->
-        endGameTurnamen ; endGameKlasik).
+    (modeTurnamen -> endGameTurnamen ; endGameKlasik).
 
 endGameKlasik :-
     pemainMenang(Pemenang), nl,
     format('Permainan selesai! ~w menghabiskan semua kartunya!~n~n', [Pemenang]),
     write('Berikut perhitungan poin sisa kartu.'), nl,
-
     urutanPemain(ListPemain),
     tampilkanPoinPemain(ListPemain), nl,
     semuaDataPemain(Data),
     urutkanRanking(Data, HasilUrut),
-
     write('Urutan pemenang:'), nl,
     tampilkanRanking(HasilUrut), nl,
     format('Selamat, ~w menjadi pemenang!~n', [Pemenang]).
+
+
+hitungPoinTim([], 0).
+hitungPoinTim([P|Sisa], Total) :-
+    kartuTangan(P, Tangan),
+    hitungTotalPoin(Tangan, Poin),
+    hitungPoinTim(Sisa, SisaPoin),
+    Total is Poin + SisaPoin.
