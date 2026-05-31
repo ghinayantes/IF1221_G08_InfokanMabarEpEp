@@ -9,18 +9,16 @@ tampilkanTim :-
     format('Tim 1 : ~w, ~w~n', [A, B]),
     format('Tim 2 : ~w, ~w~n', [C, D]).
 
-% hitung poin
-hitungPoinTim(TimList, PoinTim) :-
-    hitungPoinTim_(TimList, PoinTim).
-
-hitungPoinTim_([], 0).
-hitungPoinTim_([P|Sisa], Total) :-
+% Hitung poin tim — klausa berurutan tanpa wrapper terpisah (fix discontiguous)
+hitungPoinTim([], 0).
+hitungPoinTim([P|Sisa], Total) :-
     kartuTangan(P, Tangan),
     hitungTotalPoin(Tangan, Poin),
-    hitungPoinTim_(Sisa, SisaPoin),
+    hitungPoinTim(Sisa, SisaPoin),
     Total is Poin + SisaPoin.
 
-cetakDetailPoinTim([], _Poin, 0).
+% Cetak detail poin per anggota tim
+cetakDetailPoinTim([], _, _).
 cetakDetailPoinTim([P|Sisa], _, _) :-
     kartuTangan(P, Tangan),
     format('~w: ', [P]),
@@ -64,7 +62,8 @@ endGameTurnamen :-
     format('Tim 2 (~w, ~w) : ~w + ~w = ~w poin~n', [T2A, T2B, P2A, P2B, PoinTim2]),
     nl,
 
-    (PoinTim1 < PoinTim2 -> NomorTim = 1, Tim1 = Pemenang2
-    ; PoinTim2 < PoinTim1 -> NomorTim = 2, Tim2 = Pemenang2 ; NomorTim = 0, Pemenang2 = []),
+    (PoinTim1 < PoinTim2 -> NomorTim = 1
+    ; PoinTim2 < PoinTim1 -> NomorTim = 2
+    ; NomorTim = 0),
     (NomorTim =:= 0 -> write('Seri! Kedua tim memiliki poin yang sama.') ;
         format('Selamat, Tim ~w menjadi pemenang!~n', [NomorTim])), nl.
