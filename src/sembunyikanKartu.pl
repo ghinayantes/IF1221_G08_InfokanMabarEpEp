@@ -25,7 +25,10 @@ sembunyikanKartu(NomorUrut) :-
         write('Tidak bisa menyembunyikan kartu jika hanya tersisa 1 kartu.'), nl
     ).
 
-tampilkanKartu :- write('Tidak ada permainan yang sedang berjalan. Ketik "start." untuk mulai.'), nl.
+tampilkanKartu :- 
+    \+ giliranSekarang(_), !,
+    write('Tidak ada permainan yang sedang berjalan. Ketik "start." untuk mulai.'), nl.
+
 /* tampilkanKartu/0 — ubah semua kartu tersembunyi milik pemain aktif
    kembali ke status normal (hapus fakta kartuTersembunyi) */
 tampilkanKartu :-

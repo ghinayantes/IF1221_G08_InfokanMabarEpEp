@@ -1,4 +1,7 @@
-tangkap(_) :- write('Tidak ada permainan yang sedang berjalan. Ketik "start." untuk mulai.'), nl.
+tangkap(_) :- 
+    \+ giliranSekarang(_), !,
+    write('Tidak ada permainan yang sedang berjalan. Ketik "start." untuk mulai.'), nl.
+
 % Edge case: pemain menangkap dirinya sendiri
 tangkap(Target) :-
     giliranSekarang(Target), !,
