@@ -31,7 +31,8 @@ prosesLoadData(NamaFile) :-
     (modeTurnamen -> true ; true),
     giliranSekarang(Pemain),
     format('Status permainan berhasil dimuat dari ~w.~n', [NamaFile]),
-    format('Melanjutkan giliran ~w.~n', [Pemain]).
+    ( pemainMenang(_Pemenang) -> nl, endGame ; giliranSekarang(Pemain),
+        format('Melanjutkan giliran ~w.~n', [Pemain])).
 
 /* Baca term satu per satu sampai end_of_file */
 bacaIsiFile(Stream) :-

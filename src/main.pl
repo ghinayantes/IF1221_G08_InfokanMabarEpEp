@@ -200,7 +200,7 @@ exit :-
     giliranSekarang(_), !, 
     write('Permainan sedang berjalan, simpan permainan saat ini sebelum keluar? (y/n): '), 
     read(Pilihan), nl,
-    ((Pilihan == yes ; Pilihan == 'y') -> write('Melanjutkan ke proses penyimpanan game...'), saveGame, nl, 
+    ((Pilihan == yes ; Pilihan == 'y') -> write('Melanjutkan ke proses penyimpanan game...'), nl, saveGame, nl, 
         exit_aksi ; (Pilihan == no ; Pilihan == 'n') -> write('Keluar tanpa menyimpan...'), nl,
         exit_aksi ; write('Pilihan tidak valid! Masukkan "y." atau "n."'), nl, exit).
 

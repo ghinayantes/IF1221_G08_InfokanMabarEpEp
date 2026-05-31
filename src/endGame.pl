@@ -131,7 +131,8 @@ tampilkanPoinPemain([P|Sisa]) :-
 
 
 endGame :-
-    (modeTurnamen -> endGameTurnamen ; endGameKlasik).
+    (modeTurnamen -> endGameTurnamen ; endGameKlasik),
+    exit.
 
 endGameKlasik :-
     pemainMenang(Pemenang), nl,
