@@ -114,7 +114,7 @@ $ gprolog --consult-file main.pl
 | Perintah | Fungsi |
 | :--- | :--- |
 | `start.` | Memulai sesi permainan baru (pilih mode klasik atau turnamen) |
-| `anggota.` | Melihat daftar anggota tim pengembang |
+| `anggota.` | Melihat daftar anggota kelompok |
 | `panduan.` | Membaca panduan lengkap dan aturan bermain |
 | `help.` | Melihat daftar perintah singkat saat bermain |
 | `exit.` | Keluar dari program |
