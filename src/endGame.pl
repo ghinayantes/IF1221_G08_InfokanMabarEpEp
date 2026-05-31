@@ -55,7 +55,7 @@ comparePeringkat('<', data(_, P1, _), data(_, P2, _)) :-
     P1 < P2, !.
 comparePeringkat('>', data(_, P1, _), data(_, P2, _)) :-
     P1 > P2, !.
-/* Poin sama --> urutan main lebih awal menang */
+/* Poin sama, urutan main lebih awal menang */
 comparePeringkat('<', data(_, _, U1), data(_, _, U2)) :-
     U1 < U2, !.
 comparePeringkat('>', _, _).
@@ -144,11 +144,3 @@ endGameKlasik :-
     write('Urutan pemenang:'), nl,
     tampilkanRanking(HasilUrut), nl,
     format('Selamat, ~w menjadi pemenang!~n', [Pemenang]).
-
-
-hitungPoinTim([], 0).
-hitungPoinTim([P|Sisa], Total) :-
-    kartuTangan(P, Tangan),
-    hitungTotalPoin(Tangan, Poin),
-    hitungPoinTim(Sisa, SisaPoin),
-    Total is Poin + SisaPoin.
