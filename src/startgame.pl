@@ -50,23 +50,23 @@ startGame :-
     write('Pilih mode permainan: '),
     read(Mode),
     (Mode == 1 -> nl,
-        write('Permainan dimulai dalam mode klasik.'), nl, nl,
-        write('Masukkan jumlah pemain: '),
-        read(N),
-        (N >= 2, N =< 4 ->
+        startGamePemain(N),
             nl, inputNamaPemain(N, [], DaftarNama),
             inisialisasiGame(DaftarNama)
-        ;
-            write('Mohon masukkan angka antara 2 - 4.'), nl, startGame
-        )
-    ; Mode == 2 ->
-        nl,
+    ; Mode == 2 -> nl,
         write('Permainan dimulai dalam mode turnamen.'), nl, nl,
         inputNamaPemain(4, [], DaftarNama),
         inisialisasiGameTurnamen(DaftarNama)
     ;
         write('Pilihan tidak valid. Masukkan 1 atau 2.'), nl, startGame
     ).
+
+startGamePemain(N) :-
+    write('Masukkan jumlah pemain: '),
+    read(Input),
+    (Input >= 2, Input =< 4 ->
+        N = Input ; write('Mohon masukkan angka antara 2 - 4.'), nl,
+        startGamePemain(N)).
 
 inisialisasiGame(DaftarNama) :-
     hapusDataLama,
