@@ -65,8 +65,7 @@ $ gprolog --consult-file main.pl
 └───docs
 │   ├───Milestone1_G08.pdf
 │   ├───Milestone2_G08.pdf
-│   └───Milestone3_G08.pdf
-│
+│   └───Laporan_G08.pdf
 └───src
     │
     ├───main.pl
