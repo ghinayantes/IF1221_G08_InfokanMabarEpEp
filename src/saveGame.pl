@@ -1,3 +1,7 @@
+saveGame :- 
+    \+ giliranSekarang(_), !, 
+    write('Tidak ada permainan yang sedang berjalan. Ketik "start." untuk mulai.'), nl.
+
 saveGame :-
     statusAncaman(aktif), !,
     write('Tidak dapat menyimpan saat terkena efek Wild Draw Four.'), nl,

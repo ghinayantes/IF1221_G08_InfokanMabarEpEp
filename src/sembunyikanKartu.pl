@@ -1,3 +1,7 @@
+sembunyikanKartu(_) :- 
+    \+ giliranSekarang(_), !, 
+    write('Tidak ada permainan yang sedang berjalan. Ketik "start." untuk mulai.'), nl.
+
 sembunyikanKartu(NomorUrut) :-
     giliranSekarang(Pemain),
     kartuTangan(Pemain, Tangan),

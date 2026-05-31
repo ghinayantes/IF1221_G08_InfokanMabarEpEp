@@ -1,6 +1,7 @@
 tantang :- 
     \+ giliranSekarang(_), !,
     write('Tidak ada permainan yang sedang berjalan. Ketik "start." untuk mulai.'), nl.
+
 tantang :-
     statusAncaman(aktif), !, 
     giliranSekarang(Penantang),

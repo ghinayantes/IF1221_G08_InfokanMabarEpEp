@@ -1,3 +1,7 @@
+mainkanKartu(_) :- 
+    \+ giliranSekarang(_), !, 
+    write('Tidak ada permainan yang sedang berjalan. Ketik "start." untuk mulai.'), nl.
+
 %jika sedang ditantang tidak bisa mainkan kartu
 mainkanKartu(_) :- 
     statusAncaman(aktif),
