@@ -80,7 +80,7 @@ cekValid(hitam, wild) :- !.
 /* kartu hitam-wildDrawFour: tidak boleh dimainkan jika kartu teratas juga wild/wildDrawFour */
 cekValid(hitam, wildDrawFour) :-
     kartuTeratas(kartu(_, JenisTop)),
-    \+ isMember(JenisTop, [wild, wildDrawFour]).
+    \+ isMember(JenisTop, [wild, wildDrawFour, mimic]).
 
 /* dilempar jika warnanya sama dengan warna aktif */
 cekValid(WarnaPilihan, _) :-
