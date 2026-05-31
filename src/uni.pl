@@ -5,7 +5,9 @@ ambilKartuAtIndeks(N, [_|SisaTangan], Kartu) :-
     N1 is N - 1,
     ambilKartuAtIndeks(N1, SisaTangan, Kartu).
 
-uni(_) :- write('Tidak ada permainan yang sedang berjalan. Ketik "start." untuk mulai.'), nl.
+uni(_) :- 
+    \+ giliranSekarang(_), !,
+    write('Tidak ada permainan yang sedang berjalan. Ketik "start." untuk mulai.'), nl.
 
 uni(NomorUrut) :-
     giliranSekarang(Pemain),
