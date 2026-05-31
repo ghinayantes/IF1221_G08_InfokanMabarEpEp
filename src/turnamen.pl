@@ -17,19 +17,6 @@ hitungPoinTim([P|Sisa], Total) :-
     hitungPoinTim(Sisa, SisaPoin),
     Total is Poin + SisaPoin.
 
-% Cetak detail poin per anggota tim
-cetakDetailPoinTim([], _, _).
-cetakDetailPoinTim([P|Sisa], _, _) :-
-    kartuTangan(P, Tangan),
-    format('~w: ', [P]),
-    (Tangan == [] -> write('kartu habis = 0 poin') ;
-        cetakNamaKartu(Tangan),
-        write(' = '),
-        cetakNilaiKartu(Tangan),
-        hitungTotalPoin(Tangan, Poin),
-        format(' = ~w poin', [Poin])), nl,
-    cetakDetailPoinTim(Sisa, _, _).
-
 endGameTurnamen :-
     \+ tim1(_), !,
     write('Data tim tidak ditemukan. Menjalankan endGame mode klasik.'), nl,
