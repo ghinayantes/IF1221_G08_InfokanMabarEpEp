@@ -11,7 +11,6 @@ efekMimic(mimic) :-
                [WarnaAksi, JenisAksi, PemainLama, Selisih]),
         format('Kartu mimic menyalin efek ~w!~n', [JenisAksi]),
 
-        /* wild/wildDrawFour sudah punya read(WarnaBaru) di dalam efeknya */
         (   (JenisAksi == wild ; JenisAksi == wildDrawFour) ->
             eksekusiEfek(JenisAksi)
         ;
